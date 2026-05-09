@@ -3,7 +3,7 @@ name: Build Daily English Page
 on:
   push:
     paths:
-      - 'data.json'
+      - 'data-*.json'
 
 jobs:
   build:
@@ -11,18 +11,26 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Build index.html from template + data
+      - name: Build index.html
         run: |
           python3 << 'EOF'
-          import json
+          import json, glob, os
 
-          with open('data.json', 'r', encoding='utf-8') as f:
+          files = sorted(glob.glob('data-*.json'))
+          if not files:
+              print("No data files found")
+              exit(1)
+
+          latest = files[-1]
+          print(f"Using {latest}")
+
+          with open(latest, 'r', encoding='utf-8') as f:
               data = json.load(f)
 
           with open('template.html', 'r', encoding='utf-8') as f:
               html = f.read()
 
-          skip_keys = ['LAST_TOPICS', 'sha']
+          skip_keys = ['LAST_TOPICS']
           for key, value in data.items():
               if key not in skip_keys:
                   html = html.replace('{{' + key + '}}', str(value))
