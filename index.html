@@ -1,285 +1,1111 @@
-```html
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>English Learning - South Korea's AI Semiconductor Strategy</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-            background-color: #f4f4f4;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        .header {
-            text-align: center;
-            border-bottom: 3px solid #2c3e50;
-            padding-bottom: 20px;
-            margin-bottom: 30px;
-        }
-        .date {
-            color: #7f8c8d;
-            font-size: 14px;
-        }
-        .topic {
-            color: #2c3e50;
-            font-size: 24px;
-            font-weight: bold;
-            margin: 10px 0;
-        }
-        .article {
-            background: #ecf0f1;
-            padding: 20px;
-            border-radius: 5px;
-            margin-bottom: 30px;
-        }
-        .vocabulary, .quiz {
-            margin-bottom: 30px;
-        }
-        .vocab-item, .quiz-item {
-            background: #fff;
-            padding: 15px;
-            margin: 10px 0;
-            border-left: 4px solid #3498db;
-            border-radius: 0 5px 5px 0;
-        }
-        .word {
-            font-weight: bold;
-            color: #2980b9;
-        }
-        .definition {
-            color: #34495e;
-            margin-top: 5px;
-        }
-        h2 {
-            color: #2c3e50;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 5px;
-        }
-        .quiz-question {
-            font-weight: bold;
-            color: #2c3e50;
-        }
-        .quiz-options {
-            margin: 10px 0;
-        }
-        .quiz-options label {
-            display: block;
-            margin: 5px 0;
-            cursor: pointer;
-        }
-        .quiz-options input[type="radio"] {
-            margin-right: 8px;
-        }
-        button {
-            background: #3498db;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        button:hover {
-            background: #2980b9;
-        }
-        .result {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 5px;
-            display: none;
-        }
-        .result.show {
-            display: block;
-        }
-        .result.good {
-            background: #d5f4e6;
-            border: 1px solid #27ae60;
-            color: #27ae60;
-        }
-        .result.bad {
-            background: #fadbd8;
-            border: 1px solid #e74c3c;
-            color: #e74c3c;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily 10 — 오늘의 영어 10분</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Pretendard:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F7F5F0;
+    --surface: #FFFFFF;
+    --border: #E4E0D8;
+    --text: #1A1814;
+    --muted: #6B6660;
+    --accent: #2D6A4F;
+    --accent-light: #E8F4EF;
+    --accent2: #C77B3A;
+    --accent2-light: #FDF0E4;
+    --danger: #C0392B;
+    --danger-light: #FDECEA;
+    --today: #2D6A4F;
+    --streak: #C77B3A;
+    --highlight-word: #FFF3CD;
+    --highlight-phrase: #D4EDDA;
+    --radius: 12px;
+    --shadow: 0 2px 12px rgba(0,0,0,0.07);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Pretendard', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  /* ── HEADER ─────────────────────────────── */
+  .top-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+    white-space: nowrap;
+  }
+  .logo span { color: var(--accent2); }
+  .progress-steps {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-left: 8px;
+  }
+  .step {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .step-dot {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px;
+    font-weight: 600;
+    transition: all .3s;
+  }
+  .step-dot.done { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .step-arrow { color: var(--border); font-size: 11px; }
+
+  /* ── TIMER ───────────────────────────────── */
+  .timer-wrap {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 30px;
+    padding: 6px 14px;
+  }
+  .timer-display {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    color: var(--text);
+    min-width: 52px;
+    text-align: center;
+    transition: color .3s;
+  }
+  .timer-display.urgent { color: var(--danger); }
+  .timer-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 2px 4px;
+    color: var(--muted);
+    transition: color .2s;
+  }
+  .timer-btn:hover { color: var(--accent); }
+
+  /* ── LAYOUT ──────────────────────────────── */
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px 20px;
+    align-items: start;
+  }
+  @media (max-width: 800px) {
+    .layout { grid-template-columns: 1fr; }
+    .top-bar { flex-wrap: wrap; }
+    .progress-steps { order: 3; width: 100%; }
+    .timer-wrap { margin-left: 0; }
+  }
+
+  /* ── CARD ────────────────────────────────── */
+  .card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+  }
+  .card-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── ARTICLE ─────────────────────────────── */
+  .article-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .tag {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: var(--accent-light);
+    color: var(--accent);
+  }
+  .tag.orange { background: var(--accent2-light); color: var(--accent2); }
+  .meta-date { font-size: 12px; color: var(--muted); margin-left: auto; }
+  .article-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    line-height: 1.35;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+  .article-body {
+    font-size: 16px;
+    line-height: 1.85;
+    color: #2A2724;
+  }
+  .word-hl {
+    background: var(--highlight-word);
+    border-radius: 3px;
+    padding: 0 3px;
+    cursor: pointer;
+    border-bottom: 2px solid #F0C040;
+    transition: background .2s;
+  }
+  .word-hl:hover { background: #FFE999; }
+  .phrase-hl {
+    background: var(--highlight-phrase);
+    border-radius: 3px;
+    padding: 0 3px;
+    cursor: pointer;
+    border-bottom: 2px solid var(--accent);
+    transition: background .2s;
+  }
+  .phrase-hl:hover { background: #C3E6CB; }
+  .legend {
+    display: flex;
+    gap: 16px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-dot { width: 12px; height: 6px; border-radius: 3px; }
+  .dot-word { background: #F0C040; }
+  .dot-phrase { background: var(--accent); }
+  .read-done-btn {
+    margin-top: 16px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity .2s;
+  }
+  .read-done-btn:hover { opacity: .85; }
+  .read-done-btn:disabled { background: var(--border); color: var(--muted); cursor: default; }
+
+  /* ── VOCAB ───────────────────────────────── */
+  .vocab-toggle-btn {
+    width: 100%;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    padding: 12px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+    transition: color .2s;
+  }
+  .vocab-toggle-btn:hover { color: var(--accent); }
+  .vocab-toggle-btn .arrow { font-size: 13px; transition: transform .3s; }
+  .vocab-toggle-btn.open .arrow { transform: rotate(180deg); }
+  .vocab-detail {
+    display: none;
+    padding: 12px 0 4px;
+    font-size: 14px;
+  }
+  .vocab-detail.show { display: block; }
+  .vocab-row { display: flex; gap: 8px; align-items: baseline; margin-bottom: 4px; }
+  .vocab-en { font-weight: 600; color: var(--accent); min-width: 110px; }
+  .vocab-kr { color: var(--muted); font-size: 13px; }
+  .vocab-ex { color: #555; font-size: 13px; font-style: italic; padding-left: 118px; margin-bottom: 10px; }
+  .vocab-section-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent2);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin: 14px 0 6px;
+  }
+  .vocab-learn-btn {
+    margin-top: 12px;
+    background: var(--accent-light);
+    color: var(--accent);
+    border: none;
+    border-radius: 8px;
+    padding: 8px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .2s;
+  }
+  .vocab-learn-btn:hover { background: #D0EBDF; }
+  .vocab-learn-btn:disabled { opacity: .5; cursor: default; }
+
+  /* ── QUIZ ────────────────────────────────── */
+  .quiz-section-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent2);
+    margin: 18px 0 10px;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+  }
+  .quiz-q {
+    margin-bottom: 16px;
+    padding: 14px 16px;
+    background: var(--bg);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+  .quiz-q-text { font-size: 15px; font-weight: 500; margin-bottom: 10px; }
+  .quiz-input {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-family: inherit;
+    background: var(--surface);
+    color: var(--text);
+    transition: border-color .2s;
+  }
+  .quiz-input:focus { outline: none; border-color: var(--accent); }
+  .ox-options { display: flex; gap: 10px; }
+  .ox-btn {
+    flex: 1;
+    padding: 8px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    font-size: 18px;
+    cursor: pointer;
+    transition: all .2s;
+    font-weight: 600;
+  }
+  .ox-btn:hover { border-color: var(--accent); }
+  .ox-btn.selected { border-color: var(--accent); background: var(--accent-light); }
+  .quiz-feedback {
+    font-size: 13px;
+    margin-top: 8px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    display: none;
+  }
+  .quiz-feedback.correct { display: block; background: var(--accent-light); color: var(--accent); }
+  .quiz-feedback.wrong { display: block; background: var(--danger-light); color: var(--danger); }
+  .submit-quiz-btn {
+    width: 100%;
+    background: var(--accent2);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: opacity .2s;
+  }
+  .submit-quiz-btn:hover { opacity: .85; }
+  .submit-quiz-btn:disabled { background: var(--border); color: var(--muted); cursor: default; }
+  .score-banner {
+    text-align: center;
+    padding: 20px;
+    background: var(--accent-light);
+    border-radius: 10px;
+    margin-top: 14px;
+    display: none;
+  }
+  .score-banner.show { display: block; }
+  .score-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 40px;
+    color: var(--accent);
+  }
+  .score-msg { font-size: 14px; color: var(--muted); margin-top: 4px; }
+
+  /* ── SIDEBAR CALENDAR ─────────────────────── */
+  .sidebar {}
+  .stats-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .stat-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+    text-align: center;
+    box-shadow: var(--shadow);
+  }
+  .stat-val {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    color: var(--accent);
+    display: block;
+  }
+  .stat-val.orange { color: var(--accent2); }
+  .stat-label { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  .cal-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 18px;
+    box-shadow: var(--shadow);
+  }
+  .cal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .cal-month {
+    font-family: 'DM Serif Display', serif;
+    font-size: 17px;
+    color: var(--text);
+  }
+  .cal-nav {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    width: 28px; height: 28px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--muted);
+    display: flex; align-items: center; justify-content: center;
+    transition: all .2s;
+  }
+  .cal-nav:hover { border-color: var(--accent); color: var(--accent); }
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+  }
+  .cal-dow {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    padding: 4px 0;
+  }
+  .cal-day {
+    text-align: center;
+    padding: 5px 2px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    position: relative;
+    min-height: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: background .15s;
+    color: var(--text);
+  }
+  .cal-day:hover { background: var(--bg); }
+  .cal-day.empty { cursor: default; }
+  .cal-day.today {
+    background: var(--accent);
+    color: #fff;
+    font-weight: 700;
+  }
+  .cal-day.done-day .done-dot {
+    width: 5px; height: 5px;
+    background: var(--accent);
+    border-radius: 50%;
+    margin-top: 2px;
+  }
+  .cal-day.today .done-dot { background: #fff; }
+  .cal-day.other-month { color: var(--border); cursor: default; }
+
+  /* ── POPUP (past record) ────────────────── */
+  .popup-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.35);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+  }
+  .popup-overlay.show { display: flex; }
+  .popup-box {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 28px;
+    max-width: 380px;
+    width: 90%;
+    box-shadow: 0 12px 40px rgba(0,0,0,.18);
+    position: relative;
+  }
+  .popup-close {
+    position: absolute;
+    top: 14px; right: 16px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: var(--muted);
+  }
+  .popup-date {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 8px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+  }
+  .popup-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+  .popup-row { display: flex; justify-content: space-between; font-size: 14px; padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .popup-row:last-child { border-bottom: none; }
+  .popup-row .label { color: var(--muted); }
+  .popup-row .val { font-weight: 600; }
+  .popup-score { color: var(--accent); }
+
+  /* ── TOAST ───────────────────────────────── */
+  .toast {
+    position: fixed;
+    bottom: 30px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--text);
+    color: #fff;
+    padding: 10px 22px;
+    border-radius: 30px;
+    font-size: 14px;
+    opacity: 0;
+    transition: all .4s;
+    z-index: 300;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 500px) {
+    .article-title { font-size: 18px; }
+    .top-bar { padding: 10px 14px; gap: 10px; }
+    .layout { padding: 14px 12px; }
+    .card { padding: 16px; }
+  }
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <div class="date">December 19, 2024</div>
-            <div class="topic">South Korea's AI Semiconductor Strategy</div>
-        </div>
 
-        <div class="article">
-            <h2>South Korea Unveils Ambitious AI Chip Development Plan</h2>
-            <p>South Korea has announced a comprehensive strategy to strengthen its position in the artificial intelligence semiconductor market. The government plans to invest heavily in AI chip development to compete with global leaders like NVIDIA and AMD. This initiative comes as demand for AI processors continues to surge worldwide, driven by the rapid growth of machine learning applications and autonomous vehicles.</p>
-            
-            <p>The strategy focuses on developing cutting-edge AI chips that can handle complex computational tasks more efficiently. Korean tech giants, including Samsung and SK Hynix, are expected to play crucial roles in this ambitious project. The government aims to establish Korea as a key player in the global AI chip supply chain by 2030.</p>
-            
-            <p>Industry experts believe this move will significantly boost Korea's technological competitiveness and create numerous job opportunities. The plan also includes partnerships with leading universities to foster innovation and train skilled engineers. This strategic investment represents Korea's commitment to maintaining its leadership in the semiconductor industry while adapting to emerging AI technologies.</p>
-        </div>
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div class="logo">Daily<span>10</span></div>
+  <div class="progress-steps">
+    <div class="step">
+      <div class="step-dot" id="step1">1</div>
+      <span>읽기</span>
+    </div>
+    <span class="step-arrow">›</span>
+    <div class="step">
+      <div class="step-dot" id="step2">2</div>
+      <span>단어</span>
+    </div>
+    <span class="step-arrow">›</span>
+    <div class="step">
+      <div class="step-dot" id="step3">3</div>
+      <span>퀴즈</span>
+    </div>
+  </div>
+  <div class="timer-wrap">
+    <div class="timer-display" id="timerDisplay">10:00</div>
+    <button class="timer-btn" id="timerStartBtn" title="시작">▶</button>
+    <button class="timer-btn" id="timerResetBtn" title="리셋">↺</button>
+  </div>
+</div>
 
-        <div class="vocabulary">
-            <h2>Vocabulary & Phrases</h2>
-            
-            <div class="vocab-item">
-                <div class="word">Comprehensive (adj.)</div>
-                <div class="definition">Complete and including everything; thorough</div>
-            </div>
-            
-            <div class="vocab-item">
-                <div class="word">Surge (v./n.)</div>
-                <div class="definition">A sudden and great increase; to increase suddenly</div>
-            </div>
-            
-            <div class="vocab-item">
-                <div class="word">Autonomous (adj.)</div>
-                <div class="definition">Having the freedom to act independently; self-governing</div>
-            </div>
-            
-            <div class="vocab-item">
-                <div class="word">Cutting-edge (adj.)</div>
-                <div class="definition">Very advanced; using the newest technology or methods</div>
-            </div>
-            
-            <div class="vocab-item">
-                <div class="word">Foster (v.)</div>
-                <div class="definition">To encourage the development of something; to promote</div>
-            </div>
-            
-            <div class="vocab-item">
-                <div class="word">Compete with (phrasal verb)</div>
-                <div class="definition">To try to be more successful than others in the same market</div>
-            </div>
-            
-            <div class="vocab-item">
-                <div class="word">Focus on (phrasal verb)</div>
-                <div class="definition">To concentrate attention or effort on something</div>
-            </div>
-            
-            <div class="vocab-item">
-                <div class="word">Play a role in (phrasal verb)</div>
-                <div class="definition">To have a function or part in something; to contribute to</div>
-            </div>
-        </div>
+<!-- MAIN LAYOUT -->
+<div class="layout">
 
-        <div class="quiz">
-            <h2>Comprehension Quiz</h2>
-            
-            <div class="quiz-item">
-                <div class="quiz-question">1. What is the main purpose of South Korea's new strategy?</div>
-                <div class="quiz-options">
-                    <label><input type="radio" name="q1" value="a">To reduce AI chip imports</label>
-                    <label><input type="radio" name="q1" value="b">To strengthen its position in the AI semiconductor market</label>
-                    <label><input type="radio" name="q1" value="c">To replace traditional semiconductors</label>
-                </div>
-            </div>
-            
-            <div class="quiz-item">
-                <div class="quiz-question">2. Which companies are mentioned as key players in this project?</div>
-                <div class="quiz-options">
-                    <label><input type="radio" name="q2" value="a">NVIDIA and AMD</label>
-                    <label><input type="radio" name="q2" value="b">Samsung and SK Hynix</label>
-                    <label><input type="radio" name="q2" value="c">LG and Hyundai</label>
-                </div>
-            </div>
-            
-            <div class="quiz-item">
-                <div class="quiz-question">3. By what year does Korea aim to become a key player in the AI chip market?</div>
-                <div class="quiz-options">
-                    <label><input type="radio" name="q3" value="a">2025</label>
-                    <label><input type="radio" name="q3" value="b">2030</label>
-                    <label><input type="radio" name="q3" value="c">2035</label>
-                </div>
-            </div>
-            
-            <div class="quiz-item">
-                <div class="quiz-question">4. What does "surge" mean in the context of this article?</div>
-                <div class="quiz-options">
-                    <label><input type="radio" name="q4" value="a">To decrease rapidly</label>
-                    <label><input type="radio" name="q4" value="b">To remain stable</label>
-                    <label><input type="radio" name="q4" value="c">To increase suddenly and greatly</label>
-                </div>
-            </div>
-            
-            <div class="quiz-item">
-                <div class="quiz-question">5. What is driving the demand for AI processors?</div>
-                <div class="quiz-options">
-                    <label><input type="radio" name="q5" value="a">Machine learning applications and autonomous vehicles</label>
-                    <label><input type="radio" name="q5" value="b">Gaming and entertainment</label>
-                    <label><input type="radio" name="q5" value="c">Social media platforms</label>
-                </div>
-            </div>
-            
-            <div class="quiz-item">
-                <div class="quiz-question">6. The plan includes partnerships with universities to:</div>
-                <div class="quiz-options">
-                    <label><input type="radio" name="q6" value="a">Reduce costs</label>
-                    <label><input type="radio" name="q6" value="b">Foster innovation and train engineers</label>
-                    <label><input type="radio" name="q6" value="c">Build manufacturing facilities</label>
-                </div>
-            </div>
-            
-            <div class="quiz-item">
-                <div class="quiz-question">7. Which phrasal verb means "to concentrate attention on something"?</div>
-                <div class="quiz-options">
-                    <label><input type="radio" name="q7" value="a">Compete with</label>
-                    <label><input type="radio" name="q7" value="b">Play a role in</label>
-                    <label><input type="radio" name="q7" value="c">Focus on</label>
-                </div>
-            </div>
-            
-            <button onclick="checkAnswers()">Check Answers</button>
-            <div id="result" class="result"></div>
-        </div>
+  <!-- ── LEFT: CONTENT ── -->
+  <div class="main-col">
+
+    <!-- ARTICLE -->
+    <div class="card">
+      <div class="card-label">📰 오늘의 본문</div>
+      <div class="article-meta">
+        <span class="tag">Economy</span>
+        <span class="tag orange">KOSPI · Samsung</span>
+        <span class="meta-date" id="todayDate"></span>
+      </div>
+      <div class="article-title">
+        South Korea's KOSPI Hits Record High as Samsung Breaks the Trillion-Dollar Mark
+      </div>
+      <div class="article-body" id="articleBody">
+        South Korea's benchmark stock index, the <span class="word-hl" data-word="KOSPI">KOSPI</span>, 
+        <span class="phrase-hl" data-phrase="surged past">surged past</span> 7,300 points this week, 
+        marking an <span class="word-hl" data-word="unprecedented">unprecedented</span> all-time high. 
+        The rally has been <span class="phrase-hl" data-phrase="driven by">driven by</span> 
+        strong corporate earnings, a stable won, and growing confidence from foreign investors.
+
+        At the center of this surge is Samsung Electronics, which became only the second Asian company 
+        to <span class="phrase-hl" data-phrase="break through">break through</span> the one-trillion-dollar 
+        <span class="word-hl" data-word="market capitalization">market capitalization</span> threshold. 
+        This <span class="word-hl" data-word="milestone">milestone</span> reflects the global boom in 
+        AI-related semiconductor demand, where Samsung and SK Hynix have emerged as key 
+        <span class="word-hl" data-word="beneficiaries">beneficiaries</span>.
+
+        The South Korean government's so-called "Value-Up Program," aimed at reducing the long-standing 
+        "<span class="word-hl" data-word="Korea discount">Korea discount</span>," is also seen as 
+        <span class="phrase-hl" data-phrase="playing a role">playing a role</span> in attracting 
+        international capital. Analysts at NH Securities have now 
+        <span class="phrase-hl" data-phrase="raised their target">raised their target</span> for the 
+        KOSPI to 9,000, arguing that the market's earnings strength can 
+        <span class="phrase-hl" data-phrase="outweigh">outweigh</span> 
+        geopolitical risks. However, uncertainty around oil prices and global interest rates remains, 
+        and investors are urged to stay 
+        <span class="word-hl" data-word="vigilant">vigilant</span>.
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot dot-word"></div> 핵심 단어</div>
+        <div class="legend-item"><div class="legend-dot dot-phrase"></div> 핵심 구동사</div>
+      </div>
+      <button class="read-done-btn" id="readDoneBtn">✓ 읽기 완료</button>
     </div>
 
-    <script>
-        function checkAnswers() {
-            const answers = {
-                q1: 'b',
-                q2: 'b',
-                q3: 'b',
-                q4: 'c',
-                q5: 'a',
-                q6: 'b',
-                q7: 'c'
-            };
-            
-            let score = 0;
-            let total = Object.keys(answers).length;
-            
-            for (let question in answers) {
-                const selected = document.querySelector(`input[name="${question}"]:checked`);
-                if (selected && selected.value === answers[question]) {
-                    score++;
-                }
-            }
-            
-            const percentage = Math.round((score / total) * 100);
-            const resultDiv = document.getElementById('result');
-            
-            resultDiv.innerHTML = `You scored ${score} out of ${total} (${percentage}%)`;
-            resultDiv.className = 'result show ' + (percentage >= 70 ? 'good' : 'bad');
-            
-            if (percentage >= 70) {
-                resultDiv.innerHTML += '<br>Excellent work! You have a good understanding of the article.';
-            } else {
-                resultDiv.innerHTML += '<br>Keep studying! Review the article and vocabulary again.';
-            }
-        }
-    </script>
+    <!-- VOCAB -->
+    <div class="card">
+      <div class="card-label">📚 단어 · 구동사 해설</div>
+
+      <div class="vocab-section-title">핵심 단어 (5)</div>
+
+      <button class="vocab-toggle-btn" onclick="toggleVocab(this)">
+        unprecedented <span style="color:var(--muted);font-weight:400;font-size:13px;margin-left:6px;">전례 없는</span>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="vocab-detail">
+        <div class="vocab-row"><span class="vocab-en">unprecedented</span><span class="vocab-kr">전례 없는, 유례없는</span></div>
+        <div class="vocab-ex">"The company reported unprecedented profits this quarter."</div>
+      </div>
+
+      <button class="vocab-toggle-btn" onclick="toggleVocab(this)">
+        market capitalization <span style="color:var(--muted);font-weight:400;font-size:13px;margin-left:6px;">시가총액</span>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="vocab-detail">
+        <div class="vocab-row"><span class="vocab-en">market capitalization</span><span class="vocab-kr">시가총액 (= market cap)</span></div>
+        <div class="vocab-ex">"Apple's market capitalization exceeded $3 trillion last year."</div>
+      </div>
+
+      <button class="vocab-toggle-btn" onclick="toggleVocab(this)">
+        milestone <span style="color:var(--muted);font-weight:400;font-size:13px;margin-left:6px;">중요한 이정표</span>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="vocab-detail">
+        <div class="vocab-row"><span class="vocab-en">milestone</span><span class="vocab-kr">중요한 이정표, 획기적 사건</span></div>
+        <div class="vocab-ex">"Reaching 10 million users was a major milestone for the startup."</div>
+      </div>
+
+      <button class="vocab-toggle-btn" onclick="toggleVocab(this)">
+        beneficiary <span style="color:var(--muted);font-weight:400;font-size:13px;margin-left:6px;">수혜자</span>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="vocab-detail">
+        <div class="vocab-row"><span class="vocab-en">beneficiary</span><span class="vocab-kr">수혜자, 이익을 얻는 자</span></div>
+        <div class="vocab-ex">"Small exporters were the main beneficiaries of the weaker currency."</div>
+      </div>
+
+      <button class="vocab-toggle-btn" onclick="toggleVocab(this)">
+        vigilant <span style="color:var(--muted);font-weight:400;font-size:13px;margin-left:6px;">경계하는</span>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="vocab-detail">
+        <div class="vocab-row"><span class="vocab-en">vigilant</span><span class="vocab-kr">경계하는, 방심하지 않는</span></div>
+        <div class="vocab-ex">"Investors must remain vigilant during periods of market volatility."</div>
+      </div>
+
+      <div class="vocab-section-title" style="margin-top:20px;">핵심 구동사 (3)</div>
+
+      <button class="vocab-toggle-btn" onclick="toggleVocab(this)">
+        surge past <span style="color:var(--muted);font-weight:400;font-size:13px;margin-left:6px;">~을 훌쩍 넘어서다</span>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="vocab-detail">
+        <div class="vocab-row"><span class="vocab-en">surge past</span><span class="vocab-kr">~을 훌쩍 뛰어넘다, 급등하여 초과하다</span></div>
+        <div class="vocab-ex">"The stock surged past its previous record, closing at an all-time high."</div>
+      </div>
+
+      <button class="vocab-toggle-btn" onclick="toggleVocab(this)">
+        driven by <span style="color:var(--muted);font-weight:400;font-size:13px;margin-left:6px;">~에 의해 이끌리는</span>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="vocab-detail">
+        <div class="vocab-row"><span class="vocab-en">driven by</span><span class="vocab-kr">~에 의해 추진/촉진되는</span></div>
+        <div class="vocab-ex">"Growth was driven by strong demand in the technology sector."</div>
+      </div>
+
+      <button class="vocab-toggle-btn" onclick="toggleVocab(this)">
+        break through <span style="color:var(--muted);font-weight:400;font-size:13px;margin-left:6px;">돌파하다</span>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="vocab-detail">
+        <div class="vocab-row"><span class="vocab-en">break through</span><span class="vocab-kr">돌파하다, 장벽을 넘다</span></div>
+        <div class="vocab-ex">"The team worked hard to break through the resistance they faced."</div>
+      </div>
+
+      <button class="vocab-learn-btn" id="vocabDoneBtn" onclick="markVocabDone()">✓ 단어 학습 완료</button>
+    </div>
+
+    <!-- QUIZ -->
+    <div class="card" id="quizCard">
+      <div class="card-label">🎯 오늘의 퀴즈</div>
+
+      <!-- 빈칸 채우기 -->
+      <div class="quiz-section-title">Part 1 — 빈칸 채우기</div>
+
+      <div class="quiz-q">
+        <div class="quiz-q-text">Q1. The KOSPI hit an ________ all-time high this week.<br><small style="color:var(--muted);">(전례 없는)</small></div>
+        <input class="quiz-input" id="q1" type="text" placeholder="답을 입력하세요">
+        <div class="quiz-feedback" id="fb1"></div>
+      </div>
+
+      <div class="quiz-q">
+        <div class="quiz-q-text">Q2. Samsung broke through the one-trillion-dollar market ________.<br><small style="color:var(--muted);">(시가총액)</small></div>
+        <input class="quiz-input" id="q2" type="text" placeholder="답을 입력하세요">
+        <div class="quiz-feedback" id="fb2"></div>
+      </div>
+
+      <div class="quiz-q">
+        <div class="quiz-q-text">Q3. Investors are urged to stay ________ amid market uncertainty.<br><small style="color:var(--muted);">(경계하는)</small></div>
+        <input class="quiz-input" id="q3" type="text" placeholder="답을 입력하세요">
+        <div class="quiz-feedback" id="fb3"></div>
+      </div>
+
+      <!-- 한→영 번역 -->
+      <div class="quiz-section-title">Part 2 — 한→영 번역</div>
+
+      <div class="quiz-q">
+        <div class="quiz-q-text">Q4. "이 상승세는 강한 실적에 의해 이끌리고 있다." 를 영어로 쓰세요.<br><small style="color:var(--muted);">(driven by 구동사 포함)</small></div>
+        <input class="quiz-input" id="q4" type="text" placeholder="This rally is...">
+        <div class="quiz-feedback" id="fb4"></div>
+      </div>
+
+      <div class="quiz-q">
+        <div class="quiz-q-text">Q5. "삼성은 1조 달러를 돌파했다." 를 영어로 쓰세요.<br><small style="color:var(--muted);">(break through 포함)</small></div>
+        <input class="quiz-input" id="q5" type="text" placeholder="Samsung...">
+        <div class="quiz-feedback" id="fb5"></div>
+      </div>
+
+      <!-- O/X -->
+      <div class="quiz-section-title">Part 3 — O/X 내용 확인</div>
+
+      <div class="quiz-q">
+        <div class="quiz-q-text">Q6. Samsung Electronics is the FIRST Asian company to surpass a $1 trillion market cap.</div>
+        <div class="ox-options">
+          <button class="ox-btn" data-q="6" data-val="O" onclick="selectOX(this)">O</button>
+          <button class="ox-btn" data-q="6" data-val="X" onclick="selectOX(this)">X</button>
+        </div>
+        <div class="quiz-feedback" id="fb6"></div>
+      </div>
+
+      <div class="quiz-q">
+        <div class="quiz-q-text">Q7. NH Securities raised the KOSPI target to 9,000.</div>
+        <div class="ox-options">
+          <button class="ox-btn" data-q="7" data-val="O" onclick="selectOX(this)">O</button>
+          <button class="ox-btn" data-q="7" data-val="X" onclick="selectOX(this)">X</button>
+        </div>
+        <div class="quiz-feedback" id="fb7"></div>
+      </div>
+
+      <button class="submit-quiz-btn" id="submitQuizBtn" onclick="submitQuiz()">채점하기</button>
+
+      <div class="score-banner" id="scoreBanner">
+        <div class="score-num" id="scoreNum">0/7</div>
+        <div class="score-msg" id="scoreMsg"></div>
+      </div>
+    </div>
+
+  </div><!-- /main-col -->
+
+  <!-- ── RIGHT: SIDEBAR ── -->
+  <div class="sidebar">
+    <div class="stats-row">
+      <div class="stat-box">
+        <span class="stat-val" id="monthCount">0</span>
+        <div class="stat-label">이번 달 학습일</div>
+      </div>
+      <div class="stat-box">
+        <span class="stat-val orange" id="streakCount">0</span>
+        <div class="stat-label">🔥 연속 학습일</div>
+      </div>
+    </div>
+
+    <div class="cal-card">
+      <div class="cal-header">
+        <button class="cal-nav" id="prevMonth">‹</button>
+        <div class="cal-month" id="calMonthLabel"></div>
+        <button class="cal-nav" id="nextMonth">›</button>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+    </div>
+  </div>
+
+</div><!-- /layout -->
+
+<!-- POPUP -->
+<div class="popup-overlay" id="popupOverlay">
+  <div class="popup-box">
+    <button class="popup-close" onclick="closePopup()">✕</button>
+    <div class="popup-date" id="popupDate"></div>
+    <div class="popup-title" id="popupTitle"></div>
+    <div id="popupRows"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── ARTICLE DATA (today) ───────────────────
+const TODAY_DATA = {
+  date: new Date().toISOString().slice(0,10),
+  title: "South Korea's KOSPI Hits Record High as Samsung Breaks the Trillion-Dollar Mark",
+  topic: "Economy · KOSPI · Samsung",
+  quizScore: null,
+  completed: false
+};
+
+// ─── DATE DISPLAY ───────────────────────────
+function formatKorDate(d) {
+  return d.getFullYear() + '년 ' + (d.getMonth()+1) + '월 ' + d.getDate() + '일';
+}
+document.getElementById('todayDate').textContent = formatKorDate(new Date());
+
+// ─── localStorage HELPERS ───────────────────
+const STORE_KEY = 'daily10_records';
+function getRecords() {
+  try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; }
+  catch { return {}; }
+}
+function saveRecord(dateStr, data) {
+  const rec = getRecords();
+  rec[dateStr] = { ...rec[dateStr], ...data };
+  localStorage.setItem(STORE_KEY, JSON.stringify(rec));
+}
+function todayKey() { return new Date().toISOString().slice(0,10); }
+
+// ─── TIMER ──────────────────────────────────
+let timerSec = 600, timerRunning = false, timerInterval = null;
+const timerDisplay = document.getElementById('timerDisplay');
+const timerStartBtn = document.getElementById('timerStartBtn');
+
+function renderTimer() {
+  const m = Math.floor(timerSec/60).toString().padStart(2,'0');
+  const s = (timerSec%60).toString().padStart(2,'0');
+  timerDisplay.textContent = m + ':' + s;
+  timerDisplay.classList.toggle('urgent', timerSec <= 60);
+}
+timerStartBtn.addEventListener('click', () => {
+  if (timerRunning) {
+    clearInterval(timerInterval); timerRunning = false; timerStartBtn.textContent = '▶';
+  } else {
+    timerRunning = true; timerStartBtn.textContent = '⏸';
+    timerInterval = setInterval(() => {
+      if (timerSec <= 0) {
+        clearInterval(timerInterval); timerRunning = false; timerStartBtn.textContent = '▶';
+        showToast('⏰ 10분 완료! 오늘도 수고했어요 🎉');
+      } else { timerSec--; renderTimer(); }
+    }, 1000);
+  }
+});
+document.getElementById('timerResetBtn').addEventListener('click', () => {
+  clearInterval(timerInterval); timerRunning = false;
+  timerSec = 600; renderTimer(); timerStartBtn.textContent = '▶';
+});
+renderTimer();
+
+// ─── STEP DOTS ──────────────────────────────
+function markStep(n) {
+  document.getElementById('step'+n).classList.add('done');
+}
+function checkTodaySteps() {
+  const rec = getRecords()[todayKey()];
+  if (!rec) return;
+  if (rec.readDone) markStep(1);
+  if (rec.vocabDone) markStep(2);
+  if (rec.quizScore !== null && rec.quizScore !== undefined) markStep(3);
+}
+checkTodaySteps();
+
+// ─── READ DONE ──────────────────────────────
+const readDoneBtn = document.getElementById('readDoneBtn');
+(function(){
+  const rec = getRecords()[todayKey()];
+  if (rec && rec.readDone) { readDoneBtn.textContent = '✓ 읽기 완료됨'; readDoneBtn.disabled = true; }
+})();
+readDoneBtn.addEventListener('click', () => {
+  saveRecord(todayKey(), { readDone: true, title: TODAY_DATA.title, topic: TODAY_DATA.topic });
+  readDoneBtn.textContent = '✓ 읽기 완료됨'; readDoneBtn.disabled = true;
+  markStep(1); showToast('읽기 완료! ✅'); renderCalendar();
+});
+
+// ─── VOCAB TOGGLE ───────────────────────────
+function toggleVocab(btn) {
+  btn.classList.toggle('open');
+  const detail = btn.nextElementSibling;
+  detail.classList.toggle('show');
+}
+function markVocabDone() {
+  const btn = document.getElementById('vocabDoneBtn');
+  saveRecord(todayKey(), { vocabDone: true });
+  btn.textContent = '✓ 단어 학습 완료됨'; btn.disabled = true;
+  markStep(2); showToast('단어 학습 완료! ✅'); renderCalendar();
+}
+(function(){
+  const rec = getRecords()[todayKey()];
+  if (rec && rec.vocabDone) {
+    const btn = document.getElementById('vocabDoneBtn');
+    btn.textContent = '✓ 단어 학습 완료됨'; btn.disabled = true;
+  }
+})();
+
+// ─── OX SELECT ──────────────────────────────
+const oxSelections = {};
+function selectOX(btn) {
+  const q = btn.dataset.q;
+  const siblings = btn.parentElement.querySelectorAll('.ox-btn');
+  siblings.forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  oxSelections[q] = btn.dataset.val;
+}
+
+// ─── QUIZ SUBMIT ────────────────────────────
+const ANSWERS = {
+  q1: ['unprecedented'],
+  q2: ['capitalization','capitalisation'],
+  q3: ['vigilant'],
+  q4: ['driven by'],   // keyword match
+  q5: ['break through','broke through'],
+  q6: 'X',   // "second" not first
+  q7: 'O'
+};
+const FEEDBACK = {
+  q1: { correct:'✓ 정답! unprecedented = 전례 없는', wrong:'✗ 정답: unprecedented' },
+  q2: { correct:'✓ 정답! market capitalization = 시가총액', wrong:'✗ 정답: capitalization' },
+  q3: { correct:'✓ 정답! vigilant = 경계하는', wrong:'✗ 정답: vigilant' },
+  q4: { correct:'✓ 훌륭해요! driven by가 포함됐어요.', wrong:'✗ "driven by"를 꼭 포함하세요. 예: This rally is driven by strong earnings.' },
+  q5: { correct:'✓ 정답! break through가 포함됐어요.', wrong:'✗ "break through"를 포함하세요. 예: Samsung broke through the $1 trillion mark.' },
+  q6: { correct:'✓ 정답! 삼성은 "두 번째" 아시아 기업입니다.', wrong:'✗ 정답: X — 삼성은 두 번째(second)입니다.' },
+  q7: { correct:'✓ 정답! NH증권은 9,000을 목표가로 제시했습니다.', wrong:'✗ 정답: O — 본문에 명시돼 있어요.' }
+};
+
+function submitQuiz() {
+  let score = 0;
+  function check(id, val, fbId, type) {
+    const fb = document.getElementById(fbId);
+    let correct = false;
+    if (type === 'text') {
+      const userVal = val.trim().toLowerCase();
+      correct = ANSWERS[id].some(a => userVal.includes(a.toLowerCase()));
+    } else {
+      correct = val === ANSWERS[id];
+    }
+    if (correct) {
+      score++;
+      fb.textContent = FEEDBACK[id].correct;
+      fb.className = 'quiz-feedback correct';
+    } else {
+      fb.textContent = FEEDBACK[id].wrong;
+      fb.className = 'quiz-feedback wrong';
+    }
+  }
+  check('q1', document.getElementById('q1').value, 'fb1', 'text');
+  check('q2', document.getElementById('q2').value, 'fb2', 'text');
+  check('q3', document.getElementById('q3').value, 'fb3', 'text');
+  check('q4', document.getElementById('q4').value, 'fb4', 'text');
+  check('q5', document.getElementById('q5').value, 'fb5', 'text');
+  check('q6', oxSelections['6'] || '', 'fb6', 'ox');
+  check('q7', oxSelections['7'] || '', 'fb7', 'ox');
+
+  const banner = document.getElementById('scoreBanner');
+  const scoreNum = document.getElementById('scoreNum');
+  const scoreMsg = document.getElementById('scoreMsg');
+  scoreNum.textContent = score + '/7';
+  const msgs = ['한 번 더 도전해봐요! 💪','잘 했어요! 계속 해봐요 😊','훌륭해요! 거의 다 왔어요 👍','완벽해요! 오늘 최고예요 🏆'];
+  scoreMsg.textContent = score <= 2 ? msgs[0] : score <= 4 ? msgs[1] : score <= 6 ? msgs[2] : msgs[3];
+  banner.classList.add('show');
+
+  saveRecord(todayKey(), { quizScore: score, quizTotal: 7, completed: score >= 5, title: TODAY_DATA.title, topic: TODAY_DATA.topic });
+  document.getElementById('submitQuizBtn').textContent = '다시 채점'; 
+  markStep(3); renderCalendar(); updateStats();
+  showToast('퀴즈 완료! ' + score + '/7 점 🎉');
+}
+
+// ─── CALENDAR ───────────────────────────────
+let calYear = new Date().getFullYear();
+let calMonth = new Date().getMonth();
+
+function renderCalendar() {
+  const records = getRecords();
+  const today = new Date();
+  const label = document.getElementById('calMonthLabel');
+  label.textContent = calYear + '년 ' + (calMonth+1) + '월';
+
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML = '';
+  ['일','월','화','수','목','금','토'].forEach(d => {
+    const el = document.createElement('div');
+    el.className = 'cal-dow';
+    el.textContent = d;
+    grid.appendChild(el);
+  });
+
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+
+  for (let i = 0; i < firstDay; i++) {
+    const el = document.createElement('div');
+    el.className = 'cal-day empty';
+    grid.appendChild(el);
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const el = document.createElement('div');
+    el.className = 'cal-day';
+    const dateStr = calYear + '-' + String(calMonth+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+    const isToday = today.getFullYear()===calYear && today.getMonth()===calMonth && today.getDate()===d;
+    if (isToday) el.classList.add('today');
+
+    const rec = records[dateStr];
+    const dot = document.createElement('div');
+    dot.textContent = d;
+    el.appendChild(dot);
+
+    if (rec && rec.readDone) {
+      el.classList.add('done-day');
+      const dotEl = document.createElement('div');
+      dotEl.className = 'done-dot';
+      el.appendChild(dotEl);
+    }
+
+    if (rec) {
+      el.addEventListener('click', () => showPopup(dateStr, rec));
+    }
+    grid.appendChild(el);
+  }
+  updateStats();
+}
+
+function showPopup(dateStr, rec) {
+  document.getElementById('popupDate').textContent = dateStr;
+  document.getElementById('popupTitle').textContent = rec.title || '기록 없음';
+  const rows = document.getElementById('popupRows');
+  rows.innerHTML = `
+    <div class="popup-row"><span class="label">주제</span><span class="val">${rec.topic||'-'}</span></div>
+    <div class="popup-row"><span class="label">읽기</span><span class="val">${rec.readDone?'✓ 완료':'미완료'}</span></div>
+    <div class="popup-row"><span class="label">단어 학습</span><span class="val">${rec.vocabDone?'✓ 완료':'미완료'}</span></div>
+    <div class="popup-row"><span class="label">퀴즈 점수</span><span class="val popup-score">${rec.quizScore!=null?rec.quizScore+'/'+rec.quizTotal:'-'}</span></div>
+    <div class="popup-row"><span class="label">학습 완료</span><span class="val">${rec.completed?'✅ 완료':'진행 중'}</span></div>
+  `;
+  document.getElementById('popupOverlay').classList.add('show');
+}
+function closePopup() { document.getElementById('popupOverlay').classList.remove('show'); }
+document.getElementById('popupOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closePopup();
+});
+
+document.getElementById('prevMonth').addEventListener('click', () => {
+  calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; } renderCalendar();
+});
+document.getElementById('nextMonth').addEventListener('click', () => {
+  calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; } renderCalendar();
+});
+
+// ─── STATS ──────────────────────────────────
+function updateStats() {
+  const records = getRecords();
+  const today = new Date();
+  const ym = today.getFullYear() + '-' + String(today.getMonth()+1).padStart(2,'0');
+  let monthCount = 0;
+  Object.keys(records).forEach(k => { if (k.startsWith(ym) && records[k].readDone) monthCount++; });
+  document.getElementById('monthCount').textContent = monthCount;
+
+  // streak
+  let streak = 0;
+  const check = new Date();
+  while (true) {
+    const key = check.toISOString().slice(0,10);
+    if (records[key] && records[key].readDone) { streak++; check.setDate(check.getDate()-1); }
+    else break;
+  }
+  document.getElementById('streakCount').textContent = streak;
+}
+
+// ─── TOAST ──────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ─── INIT ────────────────────────────────────
+renderCalendar();
+
+// restore quiz if already done today
+(function(){
+  const rec = getRecords()[todayKey()];
+  if (rec && rec.quizScore !== null && rec.quizScore !== undefined) {
+    const banner = document.getElementById('scoreBanner');
+    document.getElementById('scoreNum').textContent = rec.quizScore+'/'+rec.quizTotal;
+    document.getElementById('scoreMsg').textContent = '오늘의 기록이 저장되어 있어요 ✅';
+    banner.classList.add('show');
+    document.getElementById('submitQuizBtn').textContent = '다시 채점';
+  }
+})();
+</script>
 </body>
 </html>
-```
