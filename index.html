@@ -300,7 +300,7 @@ function showPopup(dateStr,rec){
     <div class="popup-row"><span class="label">학습 완료</span><span class="val">${rec.completed?'✅ 완료':'진행 중'}</span></div>
   `;
   if(dateStr===todayKey()){
-    rows.innerHTML+='<button class="popup-view-btn" onclick="closePopup();window.scrollTo({top:0,behavior:\'smooth\'})">📖 오늘 본문 보기</button>';
+    rows.innerHTML+='<button class="popup-view-btn" onclick="closePopup();window.scrollTo({top:0,behavior:\'smooth\'})">📖 본문 보기</button>';
   } else {
     rows.innerHTML+='<a href="/english-daily/article-'+dateStr+'.html" class="popup-view-btn">📖 본문 확인하기</a>';
   }
