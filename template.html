@@ -113,6 +113,8 @@
   .popup-row .label { color: var(--muted); }
   .popup-row .val { font-weight: 600; }
   .popup-score { color: var(--accent); }
+  .popup-view-btn { margin-top: 14px; width: 100%; background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 10px; font-size: 14px; font-weight: 600; cursor: pointer; transition: opacity .2s; display: block; text-align: center; text-decoration: none; }
+  .popup-view-btn:hover { opacity: .85; }
   .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--text); color: #fff; padding: 10px 22px; border-radius: 30px; font-size: 14px; opacity: 0; transition: all .4s; z-index: 300; pointer-events: none; }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   @media (max-width: 500px) { .article-title { font-size: 18px; } .top-bar { padding: 10px 14px; gap: 10px; } .layout { padding: 14px 12px; } .card { padding: 16px; } }
@@ -289,7 +291,19 @@ function renderCalendar(){
 function showPopup(dateStr,rec){
   document.getElementById('popupDate').textContent=dateStr;
   document.getElementById('popupTitle').textContent=rec.title||'기록 없음';
-  document.getElementById('popupRows').innerHTML=`<div class="popup-row"><span class="label">주제</span><span class="val">${rec.topic||'-'}</span></div><div class="popup-row"><span class="label">읽기</span><span class="val">${rec.readDone?'✓ 완료':'미완료'}</span></div><div class="popup-row"><span class="label">단어 학습</span><span class="val">${rec.vocabDone?'✓ 완료':'미완료'}</span></div><div class="popup-row"><span class="label">퀴즈 점수</span><span class="val popup-score">${rec.quizScore!=null?rec.quizScore+'/'+rec.quizTotal:'-'}</span></div><div class="popup-row"><span class="label">학습 완료</span><span class="val">${rec.completed?'✅ 완료':'진행 중'}</span></div>`;
+  const rows=document.getElementById('popupRows');
+  rows.innerHTML=`
+    <div class="popup-row"><span class="label">주제</span><span class="val">${rec.topic||'-'}</span></div>
+    <div class="popup-row"><span class="label">읽기</span><span class="val">${rec.readDone?'✓ 완료':'미완료'}</span></div>
+    <div class="popup-row"><span class="label">단어 학습</span><span class="val">${rec.vocabDone?'✓ 완료':'미완료'}</span></div>
+    <div class="popup-row"><span class="label">퀴즈 점수</span><span class="val popup-score">${rec.quizScore!=null?rec.quizScore+'/'+rec.quizTotal:'-'}</span></div>
+    <div class="popup-row"><span class="label">학습 완료</span><span class="val">${rec.completed?'✅ 완료':'진행 중'}</span></div>
+  `;
+  if(dateStr===todayKey()){
+    rows.innerHTML+='<button class="popup-view-btn" onclick="closePopup();window.scrollTo({top:0,behavior:\'smooth\'})">📖 오늘 본문 보기</button>';
+  } else {
+    rows.innerHTML+='<a href="/english-daily/article-'+dateStr+'.html" class="popup-view-btn">📖 본문 확인하기</a>';
+  }
   document.getElementById('popupOverlay').classList.add('show');
 }
 function closePopup(){document.getElementById('popupOverlay').classList.remove('show');}
