@@ -115,17 +115,14 @@
   .popup-score { color: var(--accent); }
   .popup-view-btn { margin-top: 14px; width: 100%; background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 10px; font-size: 14px; font-weight: 600; cursor: pointer; transition: opacity .2s; display: block; text-align: center; text-decoration: none; }
   .popup-view-btn:hover { opacity: .85; }
+  .site-footer { text-align: center; padding: 24px 20px; font-size: 12px; color: var(--muted); border-top: 1px solid var(--border); margin-top: 20px; }
+  .site-footer a { color: var(--muted); text-decoration: none; }
+  .site-footer a:hover { color: var(--accent); }
   .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--text); color: #fff; padding: 10px 22px; border-radius: 30px; font-size: 14px; opacity: 0; transition: all .4s; z-index: 300; pointer-events: none; }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   @media (max-width: 500px) { .article-title { font-size: 18px; } .top-bar { padding: 10px 14px; gap: 10px; } .layout { padding: 14px 12px; } .card { padding: 16px; } }
 </style>
 </head>
-  <footer style="text-align:center;padding:20px;font-size:12px;color:#6B6660;">
-  © 2026 Daily10 · <a href="/english-daily/privacy.html" style="color:#6B6660;">개인정보처리방침</a>
-</footer>
-  <footer style="text-align:center;padding:20px;font-size:12px;color:#6B6660;">
-  © 2026 Daily10 · <a href="/english-daily/privacy.html" style="color:#6B6660;">개인정보처리방침</a>
-</footer>
 <body>
 <div class="top-bar">
   <div class="logo">Daily<span>10</span></div>
@@ -208,6 +205,9 @@
     </div>
   </div>
 </div>
+<footer class="site-footer">
+  © 2026 Daily10 · <a href="/english-daily/privacy.html">개인정보처리방침</a>
+</footer>
 <div class="popup-overlay" id="popupOverlay">
   <div class="popup-box">
     <button class="popup-close" onclick="closePopup()">✕</button>
