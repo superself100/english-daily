@@ -206,7 +206,7 @@
   </div>
 </div>
 <footer class="site-footer">
-  © 2026 Daily10 · <a href="/english-daily/privacy.html">개인정보처리방침</a>
+  © 2026 Daily10 · <a href="/privacy.html">개인정보처리방침</a>
 </footer>
 <div class="popup-overlay" id="popupOverlay">
   <div class="popup-box">
@@ -308,7 +308,7 @@ function showPopup(dateStr,rec){
   if(dateStr===todayKey()){
     rows.innerHTML+='<button class="popup-view-btn" onclick="closePopup();window.scrollTo({top:0,behavior:\'smooth\'})">📖 본문 보기</button>';
   } else {
-    rows.innerHTML+='<a href="/english-daily/article-'+dateStr+'.html" class="popup-view-btn">📖 본문 확인하기</a>';
+    rows.innerHTML+='<a href="/article-'+dateStr+'.html" class="popup-view-btn">📖 본문 확인하기</a>';
   }
   document.getElementById('popupOverlay').classList.add('show');
 }
