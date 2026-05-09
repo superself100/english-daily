@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI로 나만의 자동 영어 학습 시스템 만들기 — 하루 만에 배포까지</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;700;900&family=Pretendard:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green: #2D6A4F;
+  --green-l: #E8F4EF;
+  --green-ll: #F2FAF6;
+  --orange: #C77B3A;
+  --orange-l: #FDF0E4;
+  --dark: #1A1814;
+  --muted: #6B6660;
+  --border: #E4E0D8;
+  --bg: #F7F5F0;
+  --white: #FFFFFF;
+  --code-bg: #1E2228;
+  --code-fg: #A8D8B9;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Pretendard', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--dark);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+/* ── HERO ── */
+.hero {
+  background: var(--green);
+  padding: 80px 40px 60px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 20% 50%, rgba(255,255,255,0.05) 0%, transparent 60%),
+              radial-gradient(ellipse at 80% 20%, rgba(199,123,58,0.15) 0%, transparent 50%);
+}
+.hero-eyebrow {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 20px;
+  position: relative;
+}
+.hero h1 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(32px, 5vw, 56px);
+  font-weight: 900;
+  color: white;
+  line-height: 1.15;
+  margin-bottom: 16px;
+  position: relative;
+}
+.hero h1 span { color: #A8D5C2; }
+.hero-sub {
+  font-size: 18px;
+  color: rgba(255,255,255,0.75);
+  margin-bottom: 40px;
+  position: relative;
+}
+.hero-tags {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  position: relative;
+  margin-bottom: 40px;
+}
+.hero-tag {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  color: white;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.hero-stats {
+  display: flex;
+  gap: 0;
+  justify-content: center;
+  background: rgba(255,255,255,0.1);
+  border-radius: 16px;
+  overflow: hidden;
+  max-width: 500px;
+  margin: 0 auto;
+  position: relative;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+.hero-stat {
+  flex: 1;
+  padding: 20px 16px;
+  border-right: 1px solid rgba(255,255,255,0.15);
+}
+.hero-stat:last-child { border-right: none; }
+.hero-stat-val {
+  font-family: 'Fraunces', serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: white;
+  display: block;
+}
+.hero-stat-val.orange { color: #F0A862; }
+.hero-stat-label {
+  font-size: 11px;
+  color: rgba(255,255,255,0.6);
+  margin-top: 2px;
+}
+.hero-url {
+  margin-top: 24px;
+  font-size: 14px;
+  color: rgba(255,255,255,0.6);
+  position: relative;
+}
+.hero-url a { color: #A8D5C2; text-decoration: none; font-weight: 600; }
+
+/* ── LAYOUT ── */
+.container { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+
+/* ── TOC ── */
+.toc {
+  background: white;
+  border-bottom: 1px solid var(--border);
+  padding: 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+.toc-inner {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.toc-inner::-webkit-scrollbar { display: none; }
+.toc-link {
+  padding: 14px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  text-decoration: none;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.toc-link:hover { color: var(--green); border-bottom-color: var(--green); }
+
+/* ── SECTION ── */
+.section { padding: 64px 0; border-bottom: 1px solid var(--border); }
+.section:last-child { border-bottom: none; }
+.section-num {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.badge {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; color: white;
+  background: var(--green);
+  flex-shrink: 0;
+}
+.badge.orange { background: var(--orange); }
+.badge.step { border-radius: 8px; width: auto; padding: 4px 10px; font-size: 11px; letter-spacing: 0.06em; }
+.section-title {
+  font-family: 'Fraunces', serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--dark);
+}
+.section-title.green { color: var(--green); }
+.section-title.orange { color: var(--orange); }
+
+/* ── INFO BOX ── */
+.info-box {
+  background: var(--green-l);
+  border-left: 4px solid var(--green);
+  border-radius: 0 10px 10px 0;
+  padding: 16px 20px;
+  font-size: 15px;
+  color: var(--dark);
+  margin: 20px 0;
+  line-height: 1.7;
+}
+.info-box.orange {
+  background: var(--orange-l);
+  border-color: var(--orange);
+}
+.info-box.warning {
+  background: #FFF8E6;
+  border-color: #E6A817;
+}
+
+/* ── CARDS ── */
+.card-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin: 20px 0;
+}
+.card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+.card-emoji { font-size: 24px; margin-bottom: 10px; }
+.card-title { font-size: 15px; font-weight: 700; color: var(--green); margin-bottom: 4px; }
+.card-title.orange { color: var(--orange); }
+.card-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+/* ── TERM CARDS ── */
+.term-card {
+  display: flex;
+  gap: 16px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 12px;
+  align-items: flex-start;
+  transition: box-shadow 0.2s;
+}
+.term-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+.term-emoji {
+  font-size: 28px;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--green-ll);
+  border-radius: 12px;
+}
+.term-emoji.orange { background: var(--orange-l); }
+.term-name {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+.term-name.orange { color: var(--orange); }
+.term-desc { font-size: 14px; color: var(--muted); line-height: 1.7; }
+.term-example {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--dark);
+  background: var(--bg);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-style: italic;
+}
+
+/* ── CODE ── */
+.code-block {
+  background: var(--code-bg);
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin: 16px 0;
+  overflow-x: auto;
+}
+.code-block pre {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  font-size: 13px;
+  color: var(--code-fg);
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.code-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(168,216,185,0.5);
+  margin-bottom: 10px;
+}
+
+/* ── TABLE ── */
+.table-wrap { overflow-x: auto; margin: 20px 0; border-radius: 12px; border: 1px solid var(--border); }
+table { width: 100%; border-collapse: collapse; background: white; }
+th {
+  background: var(--green);
+  color: white;
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+}
+td {
+  padding: 11px 16px;
+  font-size: 14px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+tr:last-child td { border-bottom: none; }
+tr:nth-child(even) td { background: var(--bg); }
+.td-bold { font-weight: 600; color: var(--green); white-space: nowrap; }
+.td-orange { color: var(--orange); font-weight: 700; }
+
+/* ── FLOW ── */
+.flow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 24px 0;
+  justify-content: center;
+}
+.flow-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+}
+.flow-circle {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+}
+.flow-circle.g { background: var(--green); }
+.flow-circle.o { background: var(--orange); }
+.flow-label { font-size: 11px; font-weight: 600; color: var(--muted); max-width: 70px; line-height: 1.3; }
+.flow-arrow { font-size: 20px; color: var(--border); flex-shrink: 0; margin-bottom: 20px; }
+
+/* ── STEPS ── */
+.step-list { margin: 20px 0; }
+.step-item {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 14px;
+  align-items: flex-start;
+}
+.step-num {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--green);
+  color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.step-num.orange { background: var(--orange); }
+.step-text { font-size: 15px; color: var(--dark); line-height: 1.6; }
+
+/* ── ERROR CARDS ── */
+.error-card {
+  background: #FFF5F5;
+  border: 1px solid #FFCCCC;
+  border-left: 4px solid #E05252;
+  border-radius: 0 12px 12px 0;
+  padding: 16px 20px;
+  margin-bottom: 12px;
+}
+.error-title { font-size: 15px; font-weight: 700; color: #C0392B; margin-bottom: 4px; }
+.error-msg { font-size: 12px; color: var(--muted); margin-bottom: 8px; font-family: monospace; background: rgba(0,0,0,0.04); padding: 3px 8px; border-radius: 4px; }
+.error-solution { font-size: 14px; color: var(--dark); line-height: 1.6; }
+
+/* ── MOBILE TABLE ── */
+.mobile-table {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin: 20px 0;
+}
+.mobile-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+}
+.mobile-card-title {
+  font-size: 14px; font-weight: 700; color: var(--green);
+  margin-bottom: 14px; padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.mobile-step { font-size: 13px; color: var(--dark); margin-bottom: 6px; }
+.mobile-step::before { content: ''; display: inline-block; width: 6px; height: 6px; background: var(--green); border-radius: 50%; margin-right: 8px; vertical-align: middle; }
+
+/* ── CLOSING ── */
+.closing {
+  background: var(--green);
+  border-radius: 20px;
+  padding: 48px;
+  text-align: center;
+  margin-top: 40px;
+}
+.closing-quote {
+  font-family: 'Fraunces', serif;
+  font-size: 22px;
+  color: white;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+.closing-url {
+  font-size: 15px;
+  color: rgba(255,255,255,0.7);
+}
+.closing-url a { color: #A8D5C2; font-weight: 600; text-decoration: none; }
+
+/* ── IDEA GRID ── */
+.idea-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 14px;
+  margin: 20px 0;
+}
+.idea-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  text-align: center;
+}
+.idea-emoji { font-size: 28px; margin-bottom: 10px; }
+.idea-title { font-size: 14px; font-weight: 700; color: var(--green); margin-bottom: 6px; }
+.idea-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+/* ── HR ── */
+.divider { height: 1px; background: var(--border); margin: 28px 0; }
+
+/* ── PRINT ── */
+@media print {
+  .toc { position: static; }
+  .section { page-break-inside: avoid; }
+}
+@media (max-width: 640px) {
+  .card-grid { grid-template-columns: 1fr; }
+  .idea-grid { grid-template-columns: 1fr 1fr; }
+  .mobile-table { grid-template-columns: 1fr; }
+  .flow { gap: 4px; }
+  .flow-circle { width: 48px; height: 48px; font-size: 18px; }
+  .hero { padding: 48px 20px 40px; }
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">완전 가이드 2026</div>
+  <h1>AI로 나만의<br><span>자동 영어 학습 시스템</span> 만들기</h1>
+  <p class="hero-sub">코딩 없이 · 3시간 만에 · 배포까지 완성</p>
+  <div class="hero-tags">
+    <span class="hero-tag">Make</span>
+    <span class="hero-tag">Claude API</span>
+    <span class="hero-tag">GitHub Actions</span>
+    <span class="hero-tag">Cloudflare Pages</span>
+    <span class="hero-tag">BBC RSS</span>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <span class="hero-stat-val">3시간</span>
+      <div class="hero-stat-label">기획부터 배포까지</div>
+    </div>
+    <div class="hero-stat">
+      <span class="hero-stat-val orange">0줄</span>
+      <div class="hero-stat-label">직접 작성한 코드</div>
+    </div>
+    <div class="hero-stat">
+      <span class="hero-stat-val">자동</span>
+      <div class="hero-stat-label">매일 새벽 1시 업데이트</div>
+    </div>
+  </div>
+  <div class="hero-url">직접 써보기: <a href="https://english-daily.pages.dev" target="_blank">english-daily.pages.dev</a></div>
+</div>
+
+<!-- TOC -->
+<nav class="toc">
+  <div class="toc-inner">
+    <a href="#intro" class="toc-link">소개</a>
+    <a href="#terms" class="toc-link">용어</a>
+    <a href="#services" class="toc-link">서비스</a>
+    <a href="#logic" class="toc-link">원리</a>
+    <a href="#prep" class="toc-link">준비물</a>
+    <a href="#step1" class="toc-link">STEP 1</a>
+    <a href="#step2" class="toc-link">STEP 2</a>
+    <a href="#step3" class="toc-link">STEP 3</a>
+    <a href="#step4" class="toc-link">STEP 4</a>
+    <a href="#prompt" class="toc-link">프롬프트</a>
+    <a href="#errors" class="toc-link">오류</a>
+    <a href="#tips" class="toc-link">팁</a>
+    <a href="#ideas" class="toc-link">아이디어</a>
+  </div>
+</nav>
+
+<div class="container">
+
+<!-- 01 시스템 소개 -->
+<section class="section" id="intro">
+  <div class="section-num">
+    <div class="badge">01</div>
+    <h2 class="section-title">이 시스템이란?</h2>
+  </div>
+  <div class="info-box">
+    매일 아침, BBC 코리아 실제 뉴스를 기반으로 AI가 영어 기사 + 단어 해설 + 퀴즈를 자동으로 생성합니다.<br>
+    사람이 할 일은 <strong>아침에 일어나서 읽기만</strong> 하면 됩니다.
+  </div>
+
+  <h3 style="font-size:17px;font-weight:700;color:var(--dark);margin:24px 0 14px;">완성된 기능</h3>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-emoji">📰</div>
+      <div class="card-title">BBC 실제 뉴스 기반</div>
+      <div class="card-desc">매일 실제로 일어난 뉴스로 영어 학습. 가짜 기사 없음.</div>
+    </div>
+    <div class="card">
+      <div class="card-emoji">📚</div>
+      <div class="card-title">단어 + 구동사 해설</div>
+      <div class="card-desc">핵심 단어 5개 + 구동사 3개 자동 하이라이트 및 해설</div>
+    </div>
+    <div class="card">
+      <div class="card-emoji">🎯</div>
+      <div class="card-title">퀴즈 자동 생성</div>
+      <div class="card-desc">빈칸채우기 + 한영번역 + OX 7문제 자동 생성</div>
+    </div>
+    <div class="card">
+      <div class="card-emoji">⏰</div>
+      <div class="card-title">10분 타이머</div>
+      <div class="card-desc">집중 학습을 위한 카운트다운 타이머</div>
+    </div>
+    <div class="card">
+      <div class="card-emoji">📅</div>
+      <div class="card-title">학습 캘린더</div>
+      <div class="card-desc">월간 학습 기록 + 연속 학습 스트릭</div>
+    </div>
+    <div class="card">
+      <div class="card-emoji">📖</div>
+      <div class="card-title">과거 기사 보관</div>
+      <div class="card-desc">날짜별 기사 저장 및 복습 가능</div>
+    </div>
+    <div class="card">
+      <div class="card-emoji">📱</div>
+      <div class="card-title">모바일 최적화</div>
+      <div class="card-desc">홈 화면에 앱처럼 추가 가능</div>
+    </div>
+    <div class="card">
+      <div class="card-emoji">🔒</div>
+      <div class="card-title">개인정보처리방침</div>
+      <div class="card-desc">Google AdSense 신청 요건 충족</div>
+    </div>
+  </div>
+
+  <h3 style="font-size:17px;font-weight:700;color:var(--dark);margin:32px 0 14px;">비용 구조</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>서비스</th><th>용도</th><th>비용</th></tr>
+      <tr><td class="td-bold">Make</td><td>자동화 워크플로우</td><td>무료 (월 1,000 operations)</td></tr>
+      <tr><td class="td-bold">GitHub</td><td>파일 저장 + 자동 빌드</td><td>무료</td></tr>
+      <tr><td class="td-bold">Cloudflare Pages</td><td>웹 호스팅 + CDN</td><td>무료</td></tr>
+      <tr><td class="td-bold">Claude API</td><td>기사/단어/퀴즈 생성</td><td class="td-orange">월 약 1,400원</td></tr>
+      <tr><td class="td-bold" style="color:var(--dark)">합계</td><td></td><td class="td-orange" style="font-size:16px;">월 약 1,400원</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- 02 용어 사전 -->
+<section class="section" id="terms">
+  <div class="section-num">
+    <div class="badge">02</div>
+    <h2 class="section-title">핵심 용어 사전</h2>
+  </div>
+  <div class="info-box">처음 보는 용어들이지만 비유로 이해하면 쉬워요! 한 번만 읽으면 전체 흐름이 보입니다.</div>
+
+  <div style="margin-top:20px;">
+    <div class="term-card">
+      <div class="term-emoji">📦</div>
+      <div>
+        <div class="term-name">JSON</div>
+        <div class="term-desc">택배 상자예요. Claude가 만든 기사·단어·퀴즈를 <strong>정해진 형식으로 담아서</strong> GitHub으로 전달합니다.</div>
+        <div class="term-example">{"ARTICLE_TITLE": "한타바이러스 발생", "W1EN": "outbreak", "W1KR": "발생"}</div>
+      </div>
+    </div>
+    <div class="term-card">
+      <div class="term-emoji orange">🪪</div>
+      <div>
+        <div class="term-name orange">SHA</div>
+        <div class="term-desc">파일의 주민등록번호예요. GitHub가 "이 파일 맞냐?" 확인할 때 쓰는 고유 번호입니다. <strong>같은 파일을 수정할 때만</strong> 필요해요.</div>
+        <div class="term-example">SHA = "abc123def456..." (파일마다 고유한 값)</div>
+      </div>
+    </div>
+    <div class="term-card">
+      <div class="term-emoji">📡</div>
+      <div>
+        <div class="term-name">RSS</div>
+        <div class="term-desc">뉴스 자동 구독 피드예요. BBC처럼 언론사가 <strong>최신 뉴스를 자동으로 제공</strong>하는 방식입니다. Make가 매일 이걸 가져와요.</div>
+        <div class="term-example">feeds.bbci.co.uk/korean/rss.xml → 오늘 뉴스 20개 자동 제공</div>
+      </div>
+    </div>
+    <div class="term-card">
+      <div class="term-emoji orange">🚪</div>
+      <div>
+        <div class="term-name orange">API</div>
+        <div class="term-desc">서비스끼리 대화하는 창구예요. Claude API = Claude와 대화할 수 있는 문. <strong>Make가 이 문을 두드려서</strong> 기사를 요청합니다.</div>
+        <div class="term-example">Make → (API) → Claude: "기사 만들어줘!" → Claude가 JSON으로 응답</div>
+      </div>
+    </div>
+    <div class="term-card">
+      <div class="term-emoji">🧩</div>
+      <div>
+        <div class="term-name">모듈</div>
+        <div class="term-desc">Make 비서의 업무 단계예요. 레고 블록처럼 연결해서 자동화 흐름을 만듭니다. <strong>1번→8번→2번→6번</strong> 순서로 실행돼요.</div>
+        <div class="term-example">1번(템플릿) → 8번(뉴스) → 2번(Claude) → 6번(저장)</div>
+      </div>
+    </div>
+    <div class="term-card">
+      <div class="term-emoji orange">🏭</div>
+      <div>
+        <div class="term-name orange">GitHub Actions</div>
+        <div class="term-desc">파일이 저장되면 <strong>자동으로 실행되는 인쇄소</strong>예요. data.json + template.html을 합쳐서 index.html을 자동 생성합니다.</div>
+        <div class="term-example">data.json 저장 감지 → template에 내용 채우기 → index.html 완성!</div>
+      </div>
+    </div>
+    <div class="term-card">
+      <div class="term-emoji">💾</div>
+      <div>
+        <div class="term-name">localStorage</div>
+        <div class="term-desc">사용자 브라우저에 저장되는 <strong>개인 학습 기록 공간</strong>이에요. 같은 링크를 공유해도 각자의 기록이 따로 저장됩니다.</div>
+        <div class="term-example">A의 브라우저: 학습일 15일 / B의 브라우저: 학습일 3일 (완전 분리)</div>
+      </div>
+    </div>
+    <div class="term-card">
+      <div class="term-emoji orange">🔄</div>
+      <div>
+        <div class="term-name orange">GET / POST / PUT</div>
+        <div class="term-desc"><strong>GET</strong>=가져오기(뉴스 읽기), <strong>POST</strong>=처리요청(Claude한테 기사 만들어달라고), <strong>PUT</strong>=덮어쓰기(GitHub에 파일 저장)</div>
+        <div class="term-example">식당 비유: GET=메뉴보기, POST=주문하기, PUT=주문변경</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 서비스 소개 -->
+<section class="section" id="services">
+  <div class="section-num">
+    <div class="badge">03</div>
+    <h2 class="section-title">사용한 서비스 소개</h2>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <tr><th>서비스</th><th>역할</th><th>비유</th><th>비용</th></tr>
+      <tr>
+        <td class="td-bold">⚙️ Make</td>
+        <td>자동화 비서. 새벽 1시에 깨어나 전체 흐름을 지휘</td>
+        <td>자동화 비서</td>
+        <td>무료</td>
+      </tr>
+      <tr>
+        <td class="td-bold">🤖 Claude API</td>
+        <td>뉴스를 받아 영어 기사+단어+퀴즈를 JSON으로 생성</td>
+        <td>AI 편집장</td>
+        <td class="td-orange">월 1,400원</td>
+      </tr>
+      <tr>
+        <td class="td-bold">📁 GitHub</td>
+        <td>모든 파일 보관 + Actions로 HTML 자동 생성</td>
+        <td>창고 + 인쇄소</td>
+        <td>무료</td>
+      </tr>
+      <tr>
+        <td class="td-bold">🌐 Cloudflare Pages</td>
+        <td>GitHub 변경사항을 즉시 전 세계에 배포</td>
+        <td>전 세계 배달부</td>
+        <td>무료</td>
+      </tr>
+      <tr>
+        <td class="td-bold">📰 BBC 코리아 RSS</td>
+        <td>매일 실제 한국 관련 뉴스 헤드라인 자동 제공</td>
+        <td>실시간 뉴스 공급처</td>
+        <td>무료</td>
+      </tr>
+    </table>
+  </div>
+</section>
+
+<!-- 04 작동 원리 -->
+<section class="section" id="logic">
+  <div class="section-num">
+    <div class="badge">04</div>
+    <h2 class="section-title">전체 작동 원리</h2>
+  </div>
+  <div class="info-box">신문사에 비유하면 이해하기 쉬워요! 사람이 아무것도 안 해도 매일 자동으로 돌아갑니다.</div>
+
+  <div class="flow">
+    <div class="flow-item">
+      <div class="flow-circle g">⏰</div>
+      <div class="flow-label">새벽 1시<br>Make 실행</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-item">
+      <div class="flow-circle o">📡</div>
+      <div class="flow-label">BBC RSS<br>뉴스 수집</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-item">
+      <div class="flow-circle g">🤖</div>
+      <div class="flow-label">Claude API<br>기사 생성</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-item">
+      <div class="flow-circle o">📁</div>
+      <div class="flow-label">GitHub<br>파일 저장</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-item">
+      <div class="flow-circle g">🏭</div>
+      <div class="flow-label">Actions<br>HTML 생성</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-item">
+      <div class="flow-circle o">🌐</div>
+      <div class="flow-label">Cloudflare<br>자동 배포</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-item">
+      <div class="flow-circle g">☀️</div>
+      <div class="flow-label">아침에<br>새 기사!</div>
+    </div>
+  </div>
+
+  <div class="info-box" style="margin-top:24px;">
+    ✅ 처음 한 번 설정해두면 <strong>매일 자동</strong>으로 돌아가요.<br>
+    ✅ Make는 지휘자, Claude는 작가, GitHub는 창고, Cloudflare는 배달부예요.<br>
+    ✅ 사용자는 아침에 접속해서 읽기만 하면 됩니다!
+  </div>
+</section>
+
+<!-- 05 준비물 -->
+<section class="section" id="prep">
+  <div class="section-num">
+    <div class="badge">05</div>
+    <h2 class="section-title">준비물 & 가입</h2>
+  </div>
+  <div class="step-list">
+    <div class="step-item">
+      <div class="step-num">1</div>
+      <div class="step-text"><strong>Make 가입</strong> — make.com 접속 → 무료로 시작하기 클릭 → 이메일로 가입</div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">2</div>
+      <div class="step-text"><strong>GitHub 가입</strong> — github.com 접속 → Sign up 클릭 → 이메일 인증 완료</div>
+    </div>
+    <div class="step-item">
+      <div class="step-num orange">3</div>
+      <div class="step-text"><strong>Anthropic API 키 발급</strong> — console.anthropic.com → API Keys → Create Key<br>
+      <span style="color:var(--orange);font-size:13px;">⚠️ 발급된 키(sk-ant-xxx)를 안전한 곳에 보관하세요!</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- STEP 1 -->
+<section class="section" id="step1">
+  <div class="section-num">
+    <div class="badge orange step">STEP 1</div>
+    <h2 class="section-title orange">GitHub 저장소 만들기</h2>
+  </div>
+  <div class="step-list">
+    <div class="step-item">
+      <div class="step-num orange">1</div>
+      <div class="step-text">github.com 접속 → 우측 상단 <strong>+</strong> → New repository</div>
+    </div>
+    <div class="step-item">
+      <div class="step-num orange">2</div>
+      <div class="step-text">Repository name: <strong>english-daily</strong> 입력 → Public 선택 → Create repository</div>
+    </div>
+    <div class="step-item">
+      <div class="step-num orange">3</div>
+      <div class="step-text">Settings → Pages → Branch: main → / (root) → Save</div>
+    </div>
+    <div class="step-item">
+      <div class="step-num orange">4</div>
+      <div class="step-text">Settings → Actions → General → <strong>Read and write permissions</strong> → Save</div>
+    </div>
+  </div>
+
+  <h3 style="font-size:17px;font-weight:700;color:var(--dark);margin:24px 0 14px;">필요한 파일 목록</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>파일명</th><th>역할</th></tr>
+      <tr><td class="td-bold">template.html</td><td>매일 내용이 채워지는 HTML 템플릿 ({{ARTICLE_TITLE}} 같은 빈칸 포함)</td></tr>
+      <tr><td class="td-bold">article-template.html</td><td>과거 기사 복습 전용 페이지 템플릿</td></tr>
+      <tr><td class="td-bold">privacy.html</td><td>개인정보처리방침 페이지</td></tr>
+      <tr><td class="td-bold">data-날짜-시간.json</td><td>Claude가 생성한 오늘의 기사 데이터</td></tr>
+      <tr><td class="td-bold">index.html</td><td>GitHub Actions가 자동 생성하는 메인 페이지</td></tr>
+      <tr><td class="td-bold">article-날짜.html</td><td>GitHub Actions가 자동 생성하는 과거 기사 페이지</td></tr>
+      <tr><td class="td-bold">.github/workflows/build.yml</td><td>GitHub Actions 워크플로우 설정 파일</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- STEP 2 -->
+<section class="section" id="step2">
+  <div class="section-num">
+    <div class="badge orange step">STEP 2</div>
+    <h2 class="section-title orange">Make 시나리오 구성</h2>
+  </div>
+
+  <h3 style="font-size:17px;font-weight:700;color:var(--dark);margin:0 0 14px;">모듈 구성</h3>
+  <div class="info-box" style="margin-bottom:14px;">순서대로 만들면 번호도 순차적으로 1→2→3번이 돼요. 파일명에 시간을 붙이는 방식을 쓰면 SHA 확인 모듈 없이도 새 파일 생성이 가능합니다.</div>
+  <div class="table-wrap">
+    <table>
+      <tr><th>번호</th><th>방식</th><th>역할</th><th>URL</th></tr>
+      <tr><td class="td-bold">1번</td><td>GET</td><td>BBC 코리아 뉴스 수집</td><td>feeds.bbci.co.uk/korean/rss.xml</td></tr>
+      <tr><td class="td-bold">2번</td><td>POST</td><td>Claude API 기사 생성</td><td>api.anthropic.com/v1/messages</td></tr>
+      <tr><td class="td-bold">3번</td><td>PUT</td><td>GitHub에 data-날짜-시간.json 저장</td><td>api.github.com/repos/[YOUR_USERNAME]/[YOUR_REPO]/contents/data-날짜-시간.json</td></tr>
+    </table>
+  </div>
+
+  <h3 style="font-size:17px;font-weight:700;color:var(--dark);margin:24px 0 10px;">BBC RSS URL (1번 모듈)</h3>
+  <div class="code-block">
+    <div class="code-label">URL</div>
+    <pre>https://feeds.bbci.co.uk/korean/rss.xml</pre>
+  </div>
+
+  <h3 style="font-size:17px;font-weight:700;color:var(--dark);margin:24px 0 10px;">Claude API Body (2번 모듈)</h3>
+  <div class="info-box orange">아래 내용을 2번 모듈의 Body content에 그대로 복사 붙여넣기 하세요.<br>1번 모듈의 RSS 뉴스 헤드라인이 자동으로 Claude에게 전달됩니다. (변수 참조: {{1.data.rss...}})</div>
+  <div class="code-block">
+    <div class="code-label">Body content (JSON string)</div>
+    <pre>{"model":"claude-sonnet-4-20250514","max_tokens":4000,"messages":[{"role":"user","content":"Today is {{formatDate(now; \"YYYY-MM-DD\")}}. Here are today's real Korean news headlines from BBC Korea:\n1. {{1.data.rss.channel[].item[1].title[]}}\n2. {{1.data.rss.channel[].item[2].title[]}}\n3. {{1.data.rss.channel[].item[3].title[]}}\n4. {{1.data.rss.channel[].item[4].title[]}}\n5. {{1.data.rss.channel[].item[5].title[]}}\n\nBased on ONE of these REAL news headlines, write an accurate English learning article. Do NOT make up fictional events. Return ONLY valid JSON, no markdown, no backticks. Format: {\"ARTICLE_TITLE\":\"title\",\"TAG1\":\"category\",\"TAG2\":\"subtopic\",\"ARTICLE_BODY\":\"150-200 words\",...}"}]}</pre>
+  </div>
+
+  <h3 style="font-size:17px;font-weight:700;color:var(--dark);margin:24px 0 10px;">3번 모듈 PUT 설정 (GitHub 저장)</h3>
+  <div class="info-box">
+    💡 <strong>SHA 오류 방지 핵심!</strong><br>
+    파일명에 날짜+시간을 모두 붙이면 항상 새 파일이 생성되어 SHA 없이 저장 가능해요.
+  </div>
+  <div class="code-block">
+    <div class="code-label">3번 모듈 URL (PUT)</div>
+    <pre>https://api.github.com/repos/[YOUR_USERNAME]/[YOUR_REPO]/contents/data-{{formatDate(now; "YYYY-MM-DD-HHmm")}}.json</pre>
+  </div>
+  <div class="code-block">
+    <div class="code-label">3번 모듈 Body</div>
+    <pre>{
+  "message": "Daily data {{formatDate(now; \"YYYY-MM-DD\")}}",
+  "content": "{{base64(2.data.content[].text)}}"
+}</pre>
+  </div>
+
+  <h3 style="font-size:17px;font-weight:700;color:var(--dark);margin:24px 0 10px;">GitHub Token 발급</h3>
+  <div class="step-list">
+    <div class="step-item">
+      <div class="step-num orange">1</div>
+      <div class="step-text">GitHub → 우측 상단 프로필 → Settings</div>
+    </div>
+    <div class="step-item">
+      <div class="step-num orange">2</div>
+      <div class="step-text">Developer settings → Personal access tokens → Tokens (classic)</div>
+    </div>
+    <div class="step-item">
+      <div class="step-num orange">3</div>
+      <div class="step-text">Generate new token → <strong>repo 체크</strong> → No expiration → Generate</div>
+    </div>
+    <div class="step-item">
+      <div class="step-num orange">4</div>
+      <div class="step-text">발급된 토큰(ghp_xxx)을 Make 모듈 Authorization 헤더에 입력: <code style="background:var(--bg);padding:2px 6px;border-radius:4px;">Bearer ghp_xxx</code></div>
+    </div>
+  </div>
+</section>
+
+<!-- STEP 3 -->
+<section class="section" id="step3">
+  <div class="section-num">
+    <div class="badge orange step">STEP 3</div>
+    <h2 class="section-title orange">GitHub Actions 설정</h2>
+  </div>
+  <div class="info-box orange">GitHub → 저장소 → Add file → Create new file → 파일명: <strong>.github/workflows/build.yml</strong></div>
+
+  <div class="code-block" style="margin-top:16px;">
+    <div class="code-label">build.yml</div>
+    <pre>name: Build Daily English Page
+on:
+  push:
+    paths:
+      - 'data-*.json'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build HTML files
+        run: |
+          python3 &lt;&lt; 'EOF'
+          import json, glob, re
+          files = sorted(glob.glob('data-*.json'))
+          fix_files = [f for f in files if 'fix' in f]
+          latest = fix_files[-1] if fix_files else files[-1]
+          date_str = re.search(r'data-(\d{4}-\d{2}-\d{2})', latest).group(1)
+          with open(latest, 'r', encoding='utf-8') as f:
+              data = json.load(f)
+
+          # index.html 생성
+          with open('template.html', 'r', encoding='utf-8') as f:
+              html = f.read()
+          for key, value in data.items():
+              html = html.replace('{{' + key + '}}', str(value))
+          with open('index.html', 'w', encoding='utf-8') as f:
+              f.write(html)
+          print(f"index.html 생성 완료")
+
+          # article-날짜.html 생성 (과거 기사 보관용)
+          import os
+          if os.path.exists('article-template.html'):
+              with open('article-template.html', 'r', encoding='utf-8') as f:
+                  article_html = f.read()
+              article_html = article_html.replace('{{ARTICLE_DATE}}', date_str)
+              for key, value in data.items():
+                  article_html = article_html.replace('{{' + key + '}}', str(value))
+              article_filename = f'article-{date_str}.html'
+              with open(article_filename, 'w', encoding='utf-8') as f:
+                  f.write(article_html)
+              print(f"{article_filename} 생성 완료")
+          EOF
+      - name: Commit files
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add index.html article-*.html
+          git commit -m "Daily update" || echo "No changes"
+          git push</pre>
+  </div>
+  <div class="info-box warning" style="margin-top:16px;">
+    ⚠️ <strong>권한 설정 필수!</strong><br>
+    Settings → Actions → General → Workflow permissions<br>
+    → <strong>Read and write permissions</strong> 선택 → Save
+  </div>
+</section>
+
+<!-- STEP 4 -->
+<section class="section" id="step4">
+  <div class="section-num">
+    <div class="badge orange step">STEP 4</div>
+    <h2 class="section-title orange">Cloudflare Pages 배포</h2>
+  </div>
+  <div class="step-list">
+    <div class="step-item">
+      <div class="step-num orange">1</div>
+      <div class="step-text">cloudflare.com 로그인 → 좌측 <strong>Workers 및 Pages</strong> 클릭</div>
+    </div>
+    <div class="step-item">
+      <div class="step-num orange">2</div>
+      <div class="step-text">Pages → Create → GitHub 연결 → <strong>[YOUR_REPO]</strong> 저장소 선택</div>
+    </div>
+    <div class="step-item">
+      <div class="step-num orange">3</div>
+      <div class="step-text">Build command: <strong>비워두기</strong> / Build output directory: <strong>/</strong> (슬래시 하나)</div>
+    </div>
+    <div class="step-item">
+      <div class="step-num orange">4</div>
+      <div class="step-text">저장 및 배포 → 완료 후 <strong>[YOUR_REPO].pages.dev</strong> 접속 확인</div>
+    </div>
+  </div>
+
+  <div class="info-box">
+    💡 배포 완료 후 <strong>english-daily.pages.dev</strong> 주소로 바로 접속 가능해요!<br>
+    GitHub에 새 파일이 올라올 때마다 Cloudflare Pages가 자동으로 업데이트됩니다.
+  </div>
+</section>
+
+<!-- 06 프롬프트 -->
+<section class="section" id="prompt">
+  <div class="section-num">
+    <div class="badge">06</div>
+    <h2 class="section-title">Claude API 프롬프트 예시</h2>
+  </div>
+  <h3 style="font-size:17px;font-weight:700;color:var(--dark);margin:0 0 10px;">실제 사용 중인 전체 프롬프트</h3>
+  <div class="code-block">
+    <div class="code-label">2번 모듈 content 값</div>
+    <pre>Today is {{formatDate(now; "YYYY-MM-DD")}}.
+Here are today's real Korean news headlines from BBC Korea:
+1. {{1.data.rss.channel[].item[1].title[]}}
+2. {{1.data.rss.channel[].item[2].title[]}}
+3. {{1.data.rss.channel[].item[3].title[]}}
+4. {{1.data.rss.channel[].item[4].title[]}}
+5. {{1.data.rss.channel[].item[5].title[]}}
+
+Based on ONE of these REAL news headlines above,
+write an accurate English learning article.
+Do NOT make up fictional events.
+Return ONLY valid JSON, no markdown, no backticks.
+Format: {
+  "ARTICLE_TITLE": "title based on real news",
+  "TAG1": "category", "TAG2": "subtopic",
+  "ARTICLE_BODY": "150-200 words with highlights",
+  "W1EN": "word1", "W1KR": "korean1", "W1EX": "example1",
+  ... (W1~W5 단어, P1~P3 구동사),
+  "Q1"~"Q7": 퀴즈 문제와 답
+}</pre>
+  </div>
+
+  <h3 style="font-size:17px;font-weight:700;color:var(--dark);margin:28px 0 14px;">다른 언어/주제로 응용하기</h3>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-emoji">🇯🇵</div>
+      <div class="card-title">일본어 학습</div>
+      <div class="card-desc">"write in Japanese" + 후리가나 필드 추가</div>
+    </div>
+    <div class="card">
+      <div class="card-emoji">🇨🇳</div>
+      <div class="card-title">중국어 학습</div>
+      <div class="card-desc">"write in Chinese" + 병음(pinyin) 필드 추가</div>
+    </div>
+    <div class="card">
+      <div class="card-emoji">💼</div>
+      <div class="card-title">비즈니스 영어</div>
+      <div class="card-desc">주제를 "economy/business"로 고정</div>
+    </div>
+    <div class="card">
+      <div class="card-emoji">📚</div>
+      <div class="card-title">자격증 단어</div>
+      <div class="card-desc">뉴스 대신 단어 리스트를 Claude에게 전달</div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 오류 해결 -->
+<section class="section" id="errors">
+  <div class="section-num">
+    <div class="badge">07</div>
+    <h2 class="section-title">자주 발생하는 오류 & 해결법</h2>
+  </div>
+  <div class="error-card">
+    <div class="error-title">❌ JSON 오류</div>
+    <div class="error-msg">The provided JSON body is not valid JSON</div>
+    <div class="error-solution"><strong>원인:</strong> 프롬프트 안에 줄바꿈이나 특수문자가 JSON을 깨뜨림<br><strong>해결:</strong> 프롬프트를 한 줄로 작성하거나 영어로만 작성</div>
+  </div>
+  <div class="error-card">
+    <div class="error-title">❌ SHA 오류</div>
+    <div class="error-msg">"sha" wasn't supplied</div>
+    <div class="error-solution"><strong>원인:</strong> 같은 날짜 파일이 이미 존재할 때 SHA 값 필요<br><strong>해결:</strong> 파일명에 시간 추가 → data-YYYY-MM-DD-HHmm.json</div>
+  </div>
+  <div class="error-card">
+    <div class="error-title">❌ GitHub Actions 권한 오류</div>
+    <div class="error-msg">Process completed with exit code 128</div>
+    <div class="error-solution"><strong>원인:</strong> GitHub Actions가 파일을 push할 권한 없음<br><strong>해결:</strong> Settings → Actions → General → Read and write permissions</div>
+  </div>
+  <div class="error-card">
+    <div class="error-title">❌ RSS 빈값 오류</div>
+    <div class="error-msg">RSS feed appears to be empty (1. 2. 3. 만 출력)</div>
+    <div class="error-solution"><strong>원인:</strong> Make의 RSS 모듈 변수명이 잘못 참조됨<br><strong>해결:</strong> {{1.data.rss.channel[].item[1].title[]}} 형태로 수정 (1번 모듈 기준)</div>
+  </div>
+  <div class="error-card">
+    <div class="error-title">❌ 시나리오 자동 비활성화</div>
+    <div class="error-msg">Scenario was deactivated by Make</div>
+    <div class="error-solution"><strong>원인:</strong> 연속 오류 발생 시 Make가 자동으로 OFF<br><strong>해결:</strong> 오류 수정 후 시나리오 토글 → ON으로 변경</div>
+  </div>
+</section>
+
+<!-- 08 활용 팁 -->
+<section class="section" id="tips">
+  <div class="section-num">
+    <div class="badge">08</div>
+    <h2 class="section-title">활용 팁</h2>
+  </div>
+
+  <h3 style="font-size:17px;font-weight:700;color:var(--dark);margin:0 0 14px;">📱 모바일 홈 화면에 앱처럼 추가하기</h3>
+  <div class="mobile-table">
+    <div class="mobile-card">
+      <div class="mobile-card-title">🍎 아이폰 (Safari)</div>
+      <div class="mobile-step">Safari로 링크 접속</div>
+      <div class="mobile-step">하단 공유 버튼(□↑) 클릭</div>
+      <div class="mobile-step">홈 화면에 추가 선택</div>
+      <div class="mobile-step">추가 클릭 → 완료!</div>
+    </div>
+    <div class="mobile-card">
+      <div class="mobile-card-title">🤖 안드로이드 (Chrome)</div>
+      <div class="mobile-step">Chrome으로 링크 접속</div>
+      <div class="mobile-step">우측 상단 ⋮ 메뉴 클릭</div>
+      <div class="mobile-step">홈 화면에 추가 선택</div>
+      <div class="mobile-step">추가 클릭 → 완료!</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <h3 style="font-size:17px;font-weight:700;color:var(--dark);margin:0 0 14px;">📊 Google Analytics 연동</h3>
+  <div class="step-list">
+    <div class="step-item">
+      <div class="step-num">1</div>
+      <div class="step-text">analytics.google.com → 계정 만들기 → 웹사이트 URL 입력</div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">2</div>
+      <div class="step-text">측정 ID 발급 (G-XXXXXXXXXX 형태)</div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">3</div>
+      <div class="step-text">template.html &lt;head&gt; 안에 아래 코드 추가 후 Commit → Make Run once</div>
+    </div>
+  </div>
+  <div class="code-block">
+    <div class="code-label">template.html &lt;head&gt; 안에 추가</div>
+    <pre>&lt;script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"&gt;&lt;/script&gt;
+&lt;script&gt;
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-XXXXXXXXXX');
+&lt;/script&gt;</pre>
+  </div>
+  <div class="info-box" style="margin-top:16px;">
+    💡 학습 기록은 각 사용자의 브라우저(localStorage)에 저장됩니다.<br>
+    같은 링크를 공유해도 각자의 기록이 따로 쌓여요! <strong>항상 같은 브라우저로 접속</strong>하세요.
+  </div>
+</section>
+
+<!-- 09 응용 아이디어 -->
+<section class="section" id="ideas">
+  <div class="section-num">
+    <div class="badge">09</div>
+    <h2 class="section-title">마무리 & 응용 아이디어</h2>
+  </div>
+  <h3 style="font-size:17px;font-weight:700;color:var(--dark);margin:0 0 14px;">이 시스템으로 할 수 있는 다른 것들</h3>
+  <div class="idea-grid">
+    <div class="idea-card">
+      <div class="idea-emoji">🇯🇵</div>
+      <div class="idea-title">일본어 자동 학습</div>
+      <div class="idea-desc">같은 구조로 일본어 기사 + 한자 + 퀴즈 자동 생성</div>
+    </div>
+    <div class="idea-card">
+      <div class="idea-emoji">🇨🇳</div>
+      <div class="idea-title">중국어 자동 학습</div>
+      <div class="idea-desc">병음 + 성조 + 예문 자동 생성</div>
+    </div>
+    <div class="idea-card">
+      <div class="idea-emoji">💼</div>
+      <div class="idea-title">비즈니스 영어</div>
+      <div class="idea-desc">경제/금융 뉴스로 실무 영어 집중 학습</div>
+    </div>
+    <div class="idea-card">
+      <div class="idea-emoji">📰</div>
+      <div class="idea-title">업계 뉴스 브리핑</div>
+      <div class="idea-desc">특정 업계 RSS로 매일 한국어 뉴스 요약</div>
+    </div>
+    <div class="idea-card">
+      <div class="idea-emoji">📚</div>
+      <div class="idea-title">독서 요약 시스템</div>
+      <div class="idea-desc">책 챕터 → Claude → 요약 + 핵심 질문 자동 생성</div>
+    </div>
+    <div class="idea-card">
+      <div class="idea-emoji">🎯</div>
+      <div class="idea-title">자격증 단어 암기</div>
+      <div class="idea-desc">시험 단어 리스트로 매일 랜덤 퀴즈 자동 출제</div>
+    </div>
+  </div>
+
+  <div class="closing">
+    <div class="closing-quote">
+      "아이디어만 있으면 만들 수 있는 시대입니다.<br>
+      AI와 함께라면 코딩을 몰라도 됩니다.<br>
+      이 가이드가 당신의 첫 번째 AI 자동화 프로젝트의<br>
+      시작점이 되길 바랍니다."
+    </div>
+    <div class="closing-url">
+      직접 사용해보기: <a href="https://english-daily.pages.dev" target="_blank">english-daily.pages.dev</a>
+    </div>
+  </div>
+</section>
+
+</div><!-- /container -->
+</body>
+</html>
