@@ -14,7 +14,7 @@ jobs:
       - name: Build index.html from template + data
         run: |
           python3 << 'EOF'
-          import json, re
+          import json
 
           with open('data.json', 'r', encoding='utf-8') as f:
               data = json.load(f)
@@ -22,8 +22,10 @@ jobs:
           with open('template.html', 'r', encoding='utf-8') as f:
               html = f.read()
 
+          skip_keys = ['LAST_TOPICS', 'sha']
           for key, value in data.items():
-              html = html.replace('{{' + key + '}}', str(value))
+              if key not in skip_keys:
+                  html = html.replace('{{' + key + '}}', str(value))
 
           with open('index.html', 'w', encoding='utf-8') as f:
               f.write(html)
