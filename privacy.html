@@ -5,6 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>개인정보처리방침 — Daily10</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Pretendard:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-37ZZZ1VHS3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-37ZZZ1VHS3');
+</script>
 <style>
   :root {
     --bg: #F7F5F0; --surface: #FFFFFF; --border: #E4E0D8;
@@ -30,13 +38,16 @@
   .card { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); padding: 28px; box-shadow: var(--shadow); }
   .info-box { background: var(--accent-light); border-radius: 8px; padding: 16px 20px; margin-bottom: 20px; font-size: 14px; color: var(--accent); }
   hr { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+  a { color: var(--accent); }
   footer { text-align: center; padding: 24px; font-size: 13px; color: var(--muted); }
+  footer a { color: var(--muted); text-decoration: none; }
+  footer a:hover { color: var(--accent); }
 </style>
 </head>
 <body>
 <div class="top-bar">
-  <a href="/english-daily/" class="logo">Daily<span>10</span></a>
-  <a href="/english-daily/" class="back-btn">← 홈으로</a>
+  <a href="https://daily10.kr" class="logo">Daily<span>10</span></a>
+  <a href="https://daily10.kr" class="back-btn">← 홈으로</a>
 </div>
 
 <div class="layout">
@@ -52,7 +63,7 @@
     <p>Daily10은 별도의 회원가입이 없으며, 다음과 같은 최소한의 정보만 처리합니다:</p>
     <ul>
       <li><strong>학습 기록:</strong> 읽기 완료 여부, 퀴즈 점수, 학습 날짜 등은 사용자의 브라우저 로컬 스토리지(localStorage)에만 저장됩니다. 서버로 전송되지 않습니다.</li>
-      <li><strong>방문 통계:</strong> Google Analytics를 통해 익명의 방문자 통계를 수집할 수 있습니다.</li>
+      <li><strong>방문 통계:</strong> Google Analytics를 통해 익명의 방문자 통계를 수집합니다. 수집되는 정보는 페이지 조회수, 방문 시간, 접속 국가 등이며 개인을 식별할 수 없는 익명 데이터입니다.</li>
     </ul>
 
     <h2>2. 정보 이용 목적</h2>
@@ -74,13 +85,15 @@
 
     <h2>5. 제3자 서비스</h2>
     <ul>
-      <li><strong>GitHub Pages:</strong> 웹사이트 호스팅 서비스 (github.com/privacy)</li>
-      <li><strong>Google Fonts:</strong> 폰트 로딩 (policies.google.com/privacy)</li>
-      <li><strong>BBC 코리아 RSS:</strong> 뉴스 콘텐츠 제공 (bbc.com/privacy)</li>
+      <li><strong>Cloudflare Pages:</strong> 웹사이트 호스팅 및 CDN (<a href="https://www.cloudflare.com/privacypolicy/" target="_blank">cloudflare.com/privacypolicy</a>)</li>
+      <li><strong>Google Analytics:</strong> 방문자 통계 수집 (<a href="https://policies.google.com/privacy" target="_blank">policies.google.com/privacy</a>)</li>
+      <li><strong>Google Fonts:</strong> 폰트 로딩 (<a href="https://policies.google.com/privacy" target="_blank">policies.google.com/privacy</a>)</li>
+      <li><strong>BBC 코리아 RSS:</strong> 뉴스 콘텐츠 제공 (<a href="https://www.bbc.com/privacy" target="_blank">bbc.com/privacy</a>)</li>
+      <li><strong>Anthropic API:</strong> AI 기사 생성 (<a href="https://www.anthropic.com/privacy" target="_blank">anthropic.com/privacy</a>)</li>
     </ul>
 
     <h2>6. 사용자 권리</h2>
-    <p>사용자는 언제든지 브라우저 설정에서 로컬 스토리지 데이터를 삭제하여 저장된 학습 기록을 제거할 수 있습니다.</p>
+    <p>사용자는 언제든지 브라우저 설정에서 로컬 스토리지 데이터를 삭제하여 저장된 학습 기록을 제거할 수 있습니다. Google Analytics 데이터 수집을 원하지 않으시면 <a href="https://tools.google.com/dlpage/gaoptout" target="_blank">Google Analytics 차단 브라우저 부가기능</a>을 설치하실 수 있습니다.</p>
 
     <h2>7. 개인정보처리방침 변경</h2>
     <p>본 방침은 서비스 변경에 따라 업데이트될 수 있으며, 변경 시 페이지 상단의 날짜가 업데이트됩니다.</p>
@@ -88,13 +101,13 @@
     <hr>
 
     <h2>문의</h2>
-    <p>개인정보처리방침에 관한 문의사항이 있으시면 GitHub 저장소의 Issues를 통해 연락해 주세요.</p>
-    <p><a href="https://github.com/superself100/english-daily" style="color: var(--accent);">github.com/superself100/english-daily</a></p>
+    <p>개인정보처리방침에 관한 문의사항이 있으시면 아래로 연락해 주세요.</p>
+    <p>🌐 <a href="https://daily10.kr">daily10.kr</a></p>
   </div>
 </div>
 
 <footer>
-  © 2026 Daily10 · <a href="/english-daily/privacy.html" style="color: var(--muted);">개인정보처리방침</a>
+  © 2026 Daily10 · <a href="/privacy.html">개인정보처리방침</a>
 </footer>
 </body>
 </html>
