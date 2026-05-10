@@ -189,9 +189,9 @@
     <div class="card" id="quizCard">
       <div class="card-label">🎯 오늘의 퀴즈</div>
       <div class="quiz-section-title">Part 1 — 빈칸 채우기</div>
-      <div class="quiz-q"><div class="quiz-q-text">Q1. {{Q1}}<br><small style="color:var(--muted);">힌트: {{HINT1KR}}</small></div><input class="quiz-input" id="q1" type="text" placeholder="답을 입력하세요"><div class="quiz-feedback" id="fb1"></div></div>
-      <div class="quiz-q"><div class="quiz-q-text">Q2. {{Q2}}<br><small style="color:var(--muted);">힌트: {{HINT2KR}}</small></div><input class="quiz-input" id="q2" type="text" placeholder="답을 입력하세요"><div class="quiz-feedback" id="fb2"></div></div>
-      <div class="quiz-q"><div class="quiz-q-text">Q3. {{Q3}}<br><small style="color:var(--muted);">힌트: {{HINT3KR}}</small></div><input class="quiz-input" id="q3" type="text" placeholder="답을 입력하세요"><div class="quiz-feedback" id="fb3"></div></div>
+      <div class="quiz-q"><div class="quiz-q-text">Q1. {{Q1}}<br><small style="color:var(--muted);">힌트: <span id="hint1"></span></small></div><input class="quiz-input" id="q1" type="text" placeholder="답을 입력하세요"><div class="quiz-feedback" id="fb1"></div></div>
+      <div class="quiz-q"><div class="quiz-q-text">Q2. {{Q2}}<br><small style="color:var(--muted);">힌트: <span id="hint2"></span></small></div><input class="quiz-input" id="q2" type="text" placeholder="답을 입력하세요"><div class="quiz-feedback" id="fb2"></div></div>
+      <div class="quiz-q"><div class="quiz-q-text">Q3. {{Q3}}<br><small style="color:var(--muted);">힌트: <span id="hint3"></span></small></div><input class="quiz-input" id="q3" type="text" placeholder="답을 입력하세요"><div class="quiz-feedback" id="fb3"></div></div>
       <div class="quiz-section-title">Part 2 — 한→영 번역</div>
       <div class="quiz-q"><div class="quiz-q-text">Q4. {{Q4}}<br><small style="color:var(--muted);">({{P1EN}} 포함)</small></div><input class="quiz-input" id="q4" type="text" placeholder="영어로 쓰세요"><div class="quiz-feedback" id="fb4"></div></div>
       <div class="quiz-q"><div class="quiz-q-text">Q5. {{Q5}}<br><small style="color:var(--muted);">({{P2EN}} 포함)</small></div><input class="quiz-input" id="q5" type="text" placeholder="영어로 쓰세요"><div class="quiz-feedback" id="fb5"></div></div>
@@ -336,6 +336,12 @@ function updateStats(){
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
 renderCalendar();
 (function(){const rec=getRecords()[todayKey()];if(rec&&rec.quizScore!=null){const banner=document.getElementById('scoreBanner');document.getElementById('scoreNum').textContent=rec.quizScore+'/'+rec.quizTotal;document.getElementById('scoreMsg').textContent='오늘의 기록이 저장되어 있어요 ✅';banner.classList.add('show');document.getElementById('submitQuizBtn').textContent='다시 채점';}})();
+fetch('https://raw.githubusercontent.com/superself100/english-daily/main/data-'+new Date().toISOString().slice(0,10)+'.json')
+.then(r=>r.json()).then(d=>{
+  document.getElementById('hint1').textContent=d.HINT1KR||'';
+  document.getElementById('hint2').textContent=d.HINT2KR||'';
+  document.getElementById('hint3').textContent=d.HINT3KR||'';
+});
 </script>
 </body>
 </html>
